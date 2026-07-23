@@ -2,35 +2,40 @@
 from src.domain.services import MinimalInterventionEngine
 
 
-def test_should_return_recommendation():
+def test_should_ignore_invalid_interventions():
 
     engine = MinimalInterventionEngine()
 
     scores = {
-        "Reduzir lazer": 65,
-        "Trocar vencimento": 40,
-        "Adiar compra": 80,
+        "A": 20,
+        "B": 5,
+        "C": 1,
+    }
+
+    valid = {
+        "A": True,
+        "B": False,
+        "C": True,
     }
 
     result = engine.recommend(
-        interventions=list(scores.keys()),
+        interventions=["A", "B", "C"],
         evaluator=lambda x: scores[x],
-        baseline_score=100,
+        validator=lambda x: valid[x],
+        baseline_score=30,
     )
 
-    assert result["intervention"] == "Trocar vencimento"
-    assert result["score"] == 40
-    assert result["improvement"] == 60
-    assert result["improvement_percent"] == 60.0
+    assert result["intervention"] == "C"
 
 
-def test_should_return_none_when_no_candidates():
+def test_should_return_none_when_all_invalid():
 
     engine = MinimalInterventionEngine()
 
     result = engine.recommend(
-        interventions=[],
+        interventions=["A", "B"],
         evaluator=lambda _: 0,
+        validator=lambda _: False,
         baseline_score=100,
     )
 

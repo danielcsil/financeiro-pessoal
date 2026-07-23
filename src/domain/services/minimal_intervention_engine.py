@@ -13,7 +13,10 @@ class EvaluatedIntervention:
 
 class MinimalInterventionEngine:
     """
-    Avalia, ordena, filtra e explica intervenções.
+    Motor genérico para avaliação de intervenções.
+
+    Todo o processo de decisão é baseado em funções
+    injetadas pelo domínio (Strategy Pattern).
     """
 
     def rank(
@@ -54,9 +57,9 @@ class MinimalInterventionEngine:
     ) -> list[EvaluatedIntervention]:
 
         return [
-            candidate
-            for candidate in self.rank(interventions, evaluator)
-            if candidate.score < baseline_score
+            item
+            for item in self.rank(interventions, evaluator)
+            if item.score < baseline_score
         ]
 
 
@@ -74,7 +77,7 @@ class MinimalInterventionEngine:
             "baseline_score": baseline_score,
             "improvement": improvement,
             "improvement_percent": (
-                round((improvement / baseline_score) * 100, 2)
+                round(improvement / baseline_score * 100, 2)
                 if baseline_score > 0 else 0.0
             ),
         }
@@ -85,20 +88,29 @@ class MinimalInterventionEngine:
         interventions,
         evaluator: Callable[[Any], float],
         baseline_score: float,
+        validator: Callable[[Any], bool] | None = None,
     ) -> dict | None:
         """
-        Executa o fluxo completo:
-            ranking
-            -> melhor intervenção
-            -> explicação
+        Gera uma recomendação utilizando apenas
+        intervenções válidas.
         """
 
-        best = self.evaluate(interventions, evaluator)
+        if validator is not None:
+            interventions = [
+                i
+                for i in interventions
+                if validator(i)
+            ]
+
+        best = self.evaluate(
+            interventions,
+            evaluator,
+        )
 
         if best is None:
             return None
 
         return self.explain(
-            candidate=best,
-            baseline_score=baseline_score,
+            best,
+            baseline_score,
         )
