@@ -1,55 +1,53 @@
 
 from __future__ import annotations
 
-from src.domain.entities import FinancialAdvice
 from src.domain.services import (
-    AvailableCashAnalyzer,
-    CapitalNeedAnalyzer,
-    CashExhaustionAnalyzer,
-    CreditDependencyAnalyzer,
+    StrategyGenerator,
+    InterventionSimulator,
 )
 
 
 class FinancialAdvisor:
+    """
+    Coordena todo o processo de tomada de decisão.
 
-    def advise(
+    Diagnóstico
+        ↓
+    Estratégias
+        ↓
+    Simulações
+        ↓
+    Ranking
+        ↓
+    Melhor alternativa
+    """
+
+    def __init__(self):
+
+        self._generator = StrategyGenerator()
+        self._simulator = InterventionSimulator()
+
+
+    def recommend(
         self,
-        projection,
-    ) -> FinancialAdvice:
+        financial_plan,
+        diagnosis,
+        scorer,
+    ):
 
-        messages = []
+        strategies = self._generator.generate(
+            diagnosis
+        )
 
-        exhaustion = CashExhaustionAnalyzer().analyze(projection)
+        ranking = self._simulator.simulate_all(
+            financial_plan=financial_plan,
+            interventions=strategies,
+            scorer=scorer,
+        )
 
-        if exhaustion.exhausted:
-            messages.append(
-                f"Seu caixa ficará negativo em {exhaustion.exhaustion_date}."
-            )
+        from src.domain.entities import AdvisorResult
 
-        capital = CapitalNeedAnalyzer().analyze(projection)
-
-        if not capital.already_sufficient:
-            messages.append(
-                f"Será necessário um capital adicional de {capital.required_capital}."
-            )
-
-        credit = CreditDependencyAnalyzer().analyze(projection)
-
-        if credit.depends_on_credit:
-            messages.append(
-                "Evite assumir novas despesas antes da recuperação do caixa."
-            )
-
-        available = AvailableCashAnalyzer().analyze(projection)
-
-        if available.available_to_spend.is_zero():
-            messages.append(
-                "Não há margem segura para novos gastos."
-            )
-
-        if not messages:
-            messages.append(
-                "A projeção financeira está saudável."
-            )
-
-        return FinancialAdvice(messages)
+        return AdvisorResult(
+            best=ranking[0] if ranking else None,
+            ranking=ranking,
+        )
