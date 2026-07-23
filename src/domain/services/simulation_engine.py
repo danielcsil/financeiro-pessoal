@@ -19,21 +19,32 @@ class SimulationEngine:
         adjustments,
     ) -> SimulationResult:
 
-        timeline = ScenarioApplier().apply(
+        baseline_projection = CashFlowProjector().project(
+            opening_balance=financial_plan.opening_balance,
+            timeline=financial_plan.timeline,
+        )
+
+        baseline_liquidity = LiquidityAnalyzer().analyze(
+            baseline_projection
+        )
+
+        simulated_timeline = ScenarioApplier().apply(
             financial_plan.timeline,
             adjustments,
         )
 
-        projection = CashFlowProjector().project(
+        simulated_projection = CashFlowProjector().project(
             opening_balance=financial_plan.opening_balance,
-            timeline=timeline,
+            timeline=simulated_timeline,
         )
 
-        liquidity = LiquidityAnalyzer().analyze(
-            projection
+        simulated_liquidity = LiquidityAnalyzer().analyze(
+            simulated_projection
         )
 
         return SimulationResult(
-            projection=projection,
-            liquidity=liquidity,
+            projection=simulated_projection,
+            liquidity=simulated_liquidity,
+            baseline_projection=baseline_projection,
+            baseline_liquidity=baseline_liquidity,
         )
