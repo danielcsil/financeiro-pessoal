@@ -30,5 +30,11 @@ build/
 dist/
 *.egg-info/
 
+# JavaScript / Vue
+node_modules/
+apps/web/.vite/
+apps/web/dist/
+*.tsbuildinfo
+
 # macOS
 .DS_Store

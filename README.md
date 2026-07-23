@@ -40,6 +40,15 @@ tests/
 └── integration/        # validação do pipeline FinancialPlanner
 ```
 
+### Aplicações web (monorepo)
+
+O repositório agora também contém as aplicações de entrega em `apps/`:
+
+- `apps/api`: API FastAPI inicial com `GET /health` e `POST /api/v1/plans/analyze`.
+- `apps/web`: interface inicial em Vue 3, Vite e TypeScript. Em desenvolvimento, o Vite redireciona chamadas `/api` para `http://localhost:8000`.
+
+`src/` e `tests/` permanecem na raiz nesta primeira etapa para preservar os imports e a configuração de testes existentes. Veja [apps/README.md](apps/README.md) para os comandos de execução e a estratégia de migração segura.
+
 Decisões importantes do projeto:
 
 - O domínio não conhece infraestrutura.
