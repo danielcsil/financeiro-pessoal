@@ -1,43 +1,37 @@
 
-from src.domain.services import (
-    EvaluatedIntervention,
-    MinimalInterventionEngine,
-)
+from src.domain.services import MinimalInterventionEngine
 
 
-def test_should_explain_intervention():
+def test_should_return_recommendation():
 
     engine = MinimalInterventionEngine()
 
-    candidate = EvaluatedIntervention(
-        intervention="Reduzir lazer",
-        score=70,
-    )
+    scores = {
+        "Reduzir lazer": 65,
+        "Trocar vencimento": 40,
+        "Adiar compra": 80,
+    }
 
-    result = engine.explain(
-        candidate,
+    result = engine.recommend(
+        interventions=list(scores.keys()),
+        evaluator=lambda x: scores[x],
         baseline_score=100,
     )
 
-    assert result["intervention"] == "Reduzir lazer"
-    assert result["score"] == 70
-    assert result["baseline_score"] == 100
-    assert result["improvement"] == 30
-    assert result["improvement_percent"] == 30.0
+    assert result["intervention"] == "Trocar vencimento"
+    assert result["score"] == 40
+    assert result["improvement"] == 60
+    assert result["improvement_percent"] == 60.0
 
 
-def test_should_handle_zero_baseline():
+def test_should_return_none_when_no_candidates():
 
     engine = MinimalInterventionEngine()
 
-    candidate = EvaluatedIntervention(
-        intervention="Nenhuma",
-        score=0,
+    result = engine.recommend(
+        interventions=[],
+        evaluator=lambda _: 0,
+        baseline_score=100,
     )
 
-    result = engine.explain(
-        candidate,
-        baseline_score=0,
-    )
-
-    assert result["improvement_percent"] == 0.0
+    assert result is None

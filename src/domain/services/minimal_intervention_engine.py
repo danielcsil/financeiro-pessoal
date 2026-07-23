@@ -14,8 +14,6 @@ class EvaluatedIntervention:
 class MinimalInterventionEngine:
     """
     Avalia, ordena, filtra e explica intervenções.
-
-    Quanto menor o score, melhor a intervenção.
     """
 
     def rank(
@@ -70,16 +68,37 @@ class MinimalInterventionEngine:
 
         improvement = baseline_score - candidate.score
 
-        improvement_percent = (
-            (improvement / baseline_score) * 100
-            if baseline_score > 0
-            else 0.0
-        )
-
         return {
             "intervention": candidate.intervention,
             "score": candidate.score,
             "baseline_score": baseline_score,
             "improvement": improvement,
-            "improvement_percent": round(improvement_percent, 2),
+            "improvement_percent": (
+                round((improvement / baseline_score) * 100, 2)
+                if baseline_score > 0 else 0.0
+            ),
         }
+
+
+    def recommend(
+        self,
+        interventions,
+        evaluator: Callable[[Any], float],
+        baseline_score: float,
+    ) -> dict | None:
+        """
+        Executa o fluxo completo:
+            ranking
+            -> melhor intervenção
+            -> explicação
+        """
+
+        best = self.evaluate(interventions, evaluator)
+
+        if best is None:
+            return None
+
+        return self.explain(
+            candidate=best,
+            baseline_score=baseline_score,
+        )
