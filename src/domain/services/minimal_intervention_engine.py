@@ -13,12 +13,6 @@ class EvaluatedIntervention:
 
 
 class MinimalInterventionEngine:
-    """
-    Motor genérico para avaliação de intervenções.
-
-    Toda regra de negócio é injetada através de funções,
-    mantendo o mecanismo desacoplado do domínio financeiro.
-    """
 
     def rank(
         self,
@@ -85,64 +79,25 @@ class MinimalInterventionEngine:
         }
 
 
-    def recommend(
+    def compare(
         self,
-        interventions,
-        evaluator,
-        baseline_score,
-        metadata_provider=None,
-        validator=None,
-    ) -> dict | None:
-
-        if validator is not None:
-            interventions = [
-                i
-                for i in interventions
-                if validator(i)
-            ]
-
-        candidate = self.evaluate(
-            interventions=interventions,
-            evaluator=evaluator,
-            metadata_provider=metadata_provider,
-        )
-
-        if candidate is None:
-            return None
-
-        return self.explain(
-            candidate,
-            baseline_score,
-        )
-
-
-    def recommend_all(
-        self,
-        interventions,
-        evaluator,
-        baseline_score,
-        metadata_provider=None,
-        validator=None,
+        ranking: list[EvaluatedIntervention],
     ) -> list[dict]:
-        """
-        Retorna todas as intervenções válidas,
-        ordenadas da melhor para a pior.
-        """
 
-        if validator is not None:
-            interventions = [
-                i
-                for i in interventions
-                if validator(i)
-            ]
+        if not ranking:
+            return []
 
-        ranking = self.rank(
-            interventions,
-            evaluator,
-            metadata_provider,
-        )
+        best_score = ranking[0].score
 
-        return [
-            self.explain(item, baseline_score)
-            for item in ranking
-        ]
+        comparison = []
+
+        for item in ranking:
+
+            comparison.append({
+                "intervention": item.intervention,
+                "score": item.score,
+                "gap_to_best": item.score - best_score,
+                "metadata": item.metadata or {},
+            })
+
+        return comparison
