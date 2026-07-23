@@ -13,11 +13,29 @@ class EvaluatedIntervention:
 
 class MinimalInterventionEngine:
     """
-    Avalia múltiplas intervenções e retorna aquela que
-    produz o melhor resultado segundo uma função de score.
+    Avalia e ordena intervenções por uma função de score.
 
     Quanto menor o score, melhor a intervenção.
     """
+
+    def rank(
+        self,
+        interventions,
+        evaluator: Callable[[Any], float],
+    ) -> list[EvaluatedIntervention]:
+
+        ranking = [
+            EvaluatedIntervention(
+                intervention=i,
+                score=evaluator(i),
+            )
+            for i in interventions
+        ]
+
+        ranking.sort(key=lambda item: item.score)
+
+        return ranking
+
 
     def evaluate(
         self,
@@ -25,18 +43,6 @@ class MinimalInterventionEngine:
         evaluator: Callable[[Any], float],
     ) -> EvaluatedIntervention | None:
 
-        best = None
+        ranking = self.rank(interventions, evaluator)
 
-        for intervention in interventions:
-
-            score = evaluator(intervention)
-
-            candidate = EvaluatedIntervention(
-                intervention=intervention,
-                score=score,
-            )
-
-            if best is None or candidate.score < best.score:
-                best = candidate
-
-        return best
+        return ranking[0] if ranking else None
