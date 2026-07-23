@@ -11,6 +11,8 @@ from .recommendation import Recommendation
 from .recurrence_frequency import RecurrenceFrequency
 from .recurring_transaction import RecurringTransaction
 from .scenario import Scenario
+from .scenario_adjustment import ScenarioAdjustment
+from .scenario_adjustment_type import ScenarioAdjustmentType
 from .scenario_type import ScenarioType
 from .timeline_day import TimelineDay
 from .transaction import Transaction
@@ -28,6 +30,8 @@ __all__ = [
     "RecurrenceFrequency",
     "RecurringTransaction",
     "Scenario",
+    "ScenarioAdjustment",
+    "ScenarioAdjustmentType",
     "ScenarioType",
     "TimelineDay",
     "Transaction",
