@@ -4,6 +4,8 @@ from .cash_flow_projection import CashFlowProjection
 from .cash_flow_timeline import CashFlowTimeline
 from .category import Category
 from .financial_plan import FinancialPlan
+from .financial_status import FinancialStatus
+from .financial_status_type import FinancialStatusType
 from .liquidity_analysis import LiquidityAnalysis
 from .planning_period import PlanningPeriod
 from .projection_day import ProjectionDay
@@ -23,6 +25,8 @@ __all__ = [
     "CashFlowTimeline",
     "Category",
     "FinancialPlan",
+    "FinancialStatus",
+    "FinancialStatusType",
     "LiquidityAnalysis",
     "PlanningPeriod",
     "ProjectionDay",
