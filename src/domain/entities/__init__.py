@@ -3,7 +3,9 @@ from .account import Account
 from .cash_flow_projection import CashFlowProjection
 from .cash_flow_timeline import CashFlowTimeline
 from .category import Category
+from .financial_plan import FinancialPlan
 from .liquidity_analysis import LiquidityAnalysis
+from .planning_period import PlanningPeriod
 from .projection_day import ProjectionDay
 from .recommendation import Recommendation
 from .timeline_day import TimelineDay
@@ -14,7 +16,9 @@ __all__ = [
     "CashFlowProjection",
     "CashFlowTimeline",
     "Category",
+    "FinancialPlan",
     "LiquidityAnalysis",
+    "PlanningPeriod",
     "ProjectionDay",
     "Recommendation",
     "TimelineDay",
