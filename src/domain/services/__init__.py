@@ -6,6 +6,7 @@ from .cash_flow_projector import CashFlowProjector
 from .credit_dependency_analyzer import CreditDependencyAnalyzer
 from .expense_simulation_service import ExpenseSimulationService
 from .financial_status_analyzer import FinancialStatusAnalyzer
+from .income_simulation_service import IncomeSimulationService
 from .liquidity_analyzer import LiquidityAnalyzer
 from .recommendation_engine import RecommendationEngine
 from .recurring_expense_capacity_analyzer import RecurringExpenseCapacityAnalyzer
@@ -21,6 +22,7 @@ __all__ = [
     "CreditDependencyAnalyzer",
     "ExpenseSimulationService",
     "FinancialStatusAnalyzer",
+    "IncomeSimulationService",
     "LiquidityAnalyzer",
     "RecommendationEngine",
     "RecurringExpenseCapacityAnalyzer",

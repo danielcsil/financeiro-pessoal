@@ -11,6 +11,7 @@ from .expense_simulation_result import ExpenseSimulationResult
 from .financial_plan import FinancialPlan
 from .financial_status import FinancialStatus
 from .financial_status_type import FinancialStatusType
+from .income_simulation_result import IncomeSimulationResult
 from .liquidity_analysis import LiquidityAnalysis
 from .planning_period import PlanningPeriod
 from .projection_day import ProjectionDay
@@ -38,6 +39,7 @@ __all__ = [
     "FinancialPlan",
     "FinancialStatus",
     "FinancialStatusType",
+    "IncomeSimulationResult",
     "LiquidityAnalysis",
     "PlanningPeriod",
     "ProjectionDay",
