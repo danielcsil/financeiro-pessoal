@@ -14,11 +14,19 @@ export interface PlanAnalysisRequest {
 }
 
 export interface PlanAnalysisResponse {
-  score: { overall: number }
+  score: {
+    overall: number
+    liquidity: number
+    reserve: number
+    credit_dependency: number
+    stability: number
+    risk: number
+  }
   liquidity: {
     minimum_balance: string
     maximum_balance: string
     ending_balance: string
+    first_negative_day: string | null
     negative_days: number
     has_negative_balance: boolean
   }
