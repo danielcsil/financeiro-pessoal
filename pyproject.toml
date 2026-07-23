@@ -1,0 +1,9 @@
+[project]
+name = "financeiro-pessoal"
+version = "1.0.0-alpha.1"
+description = "Sistema Financeiro Pessoal"
+requires-python = ">=3.12"
+
+dependencies = [
+    "openpyxl>=3.1.5"
+]

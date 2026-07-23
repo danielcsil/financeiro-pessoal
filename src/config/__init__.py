@@ -1,0 +1,3 @@
+"""
+Configurações globais do sistema.
+"""
