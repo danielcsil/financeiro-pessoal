@@ -10,6 +10,8 @@ from .projection_day import ProjectionDay
 from .recommendation import Recommendation
 from .recurrence_frequency import RecurrenceFrequency
 from .recurring_transaction import RecurringTransaction
+from .scenario import Scenario
+from .scenario_type import ScenarioType
 from .timeline_day import TimelineDay
 from .transaction import Transaction
 
@@ -25,6 +27,8 @@ __all__ = [
     "Recommendation",
     "RecurrenceFrequency",
     "RecurringTransaction",
+    "Scenario",
+    "ScenarioType",
     "TimelineDay",
     "Transaction",
 ]
