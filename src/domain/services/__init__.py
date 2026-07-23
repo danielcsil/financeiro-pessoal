@@ -7,6 +7,7 @@ from .credit_dependency_analyzer import CreditDependencyAnalyzer
 from .financial_status_analyzer import FinancialStatusAnalyzer
 from .liquidity_analyzer import LiquidityAnalyzer
 from .recommendation_engine import RecommendationEngine
+from .recurring_expense_capacity_analyzer import RecurringExpenseCapacityAnalyzer
 from .recurring_transaction_expander import RecurringTransactionExpander
 from .scenario_applier import ScenarioApplier
 from .scenario_projector import ScenarioProjector
@@ -20,6 +21,7 @@ __all__ = [
     "FinancialStatusAnalyzer",
     "LiquidityAnalyzer",
     "RecommendationEngine",
+    "RecurringExpenseCapacityAnalyzer",
     "RecurringTransactionExpander",
     "ScenarioApplier",
     "ScenarioProjector",
