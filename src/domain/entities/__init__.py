@@ -1,6 +1,7 @@
 
 from .account import Account
 from .available_cash_analysis import AvailableCashAnalysis
+from .cash_exhaustion_analysis import CashExhaustionAnalysis
 from .cash_flow_projection import CashFlowProjection
 from .cash_flow_timeline import CashFlowTimeline
 from .category import Category
@@ -23,6 +24,7 @@ from .transaction import Transaction
 __all__ = [
     "Account",
     "AvailableCashAnalysis",
+    "CashExhaustionAnalysis",
     "CashFlowProjection",
     "CashFlowTimeline",
     "Category",
