@@ -1,38 +1,6 @@
 
-from .available_cash_analyzer import AvailableCashAnalyzer
-from .capital_need_analyzer import CapitalNeedAnalyzer
-from .cash_exhaustion_analyzer import CashExhaustionAnalyzer
-from .cash_flow_projector import CashFlowProjector
-from .credit_dependency_analyzer import CreditDependencyAnalyzer
-from .expense_simulation_service import ExpenseSimulationService
-from .financial_advisor import FinancialAdvisor
-from .financial_status_analyzer import FinancialStatusAnalyzer
-from .goal_analyzer import GoalAnalyzer
-from .income_simulation_service import IncomeSimulationService
-from .liquidity_analyzer import LiquidityAnalyzer
-from .recommendation_engine import RecommendationEngine
-from .recurring_expense_capacity_analyzer import RecurringExpenseCapacityAnalyzer
-from .recurring_transaction_expander import RecurringTransactionExpander
-from .scenario_applier import ScenarioApplier
-from .scenario_projector import ScenarioProjector
-from .simulation_engine import SimulationEngine
+# Acrescente as importações abaixo ao arquivo existente
 
-__all__ = [
-    "AvailableCashAnalyzer",
-    "CapitalNeedAnalyzer",
-    "CashExhaustionAnalyzer",
-    "CashFlowProjector",
-    "CreditDependencyAnalyzer",
-    "ExpenseSimulationService",
-    "FinancialAdvisor",
-    "FinancialStatusAnalyzer",
-    "GoalAnalyzer",
-    "IncomeSimulationService",
-    "LiquidityAnalyzer",
-    "RecommendationEngine",
-    "RecurringExpenseCapacityAnalyzer",
-    "RecurringTransactionExpander",
-    "ScenarioApplier",
-    "ScenarioProjector",
-    "SimulationEngine",
-]
+from .snapshot_builder import SnapshotBuilder
+
+# Acrescente "SnapshotBuilder" ao __all__
