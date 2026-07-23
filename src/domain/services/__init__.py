@@ -1,5 +1,6 @@
 
 from .available_cash_analyzer import AvailableCashAnalyzer
+from .capital_need_analyzer import CapitalNeedAnalyzer
 from .cash_exhaustion_analyzer import CashExhaustionAnalyzer
 from .cash_flow_projector import CashFlowProjector
 from .financial_status_analyzer import FinancialStatusAnalyzer
@@ -11,6 +12,7 @@ from .scenario_projector import ScenarioProjector
 
 __all__ = [
     "AvailableCashAnalyzer",
+    "CapitalNeedAnalyzer",
     "CashExhaustionAnalyzer",
     "CashFlowProjector",
     "FinancialStatusAnalyzer",
