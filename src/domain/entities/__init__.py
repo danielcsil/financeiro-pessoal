@@ -6,6 +6,7 @@ from .cash_exhaustion_analysis import CashExhaustionAnalysis
 from .cash_flow_projection import CashFlowProjection
 from .cash_flow_timeline import CashFlowTimeline
 from .category import Category
+from .credit_dependency_analysis import CreditDependencyAnalysis
 from .financial_plan import FinancialPlan
 from .financial_status import FinancialStatus
 from .financial_status_type import FinancialStatusType
@@ -30,6 +31,7 @@ __all__ = [
     "CashFlowProjection",
     "CashFlowTimeline",
     "Category",
+    "CreditDependencyAnalysis",
     "FinancialPlan",
     "FinancialStatus",
     "FinancialStatusType",
