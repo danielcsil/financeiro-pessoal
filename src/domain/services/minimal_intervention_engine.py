@@ -9,29 +9,41 @@ from typing import Any, Callable
 class EvaluatedIntervention:
     intervention: Any
     score: float
+    metadata: dict[str, Any] | None = None
 
 
 class MinimalInterventionEngine:
     """
     Motor genérico para avaliação de intervenções.
 
-    Todo o processo de decisão é baseado em funções
-    injetadas pelo domínio (Strategy Pattern).
+    O cálculo do score e das evidências é totalmente
+    delegado ao domínio através de funções injetadas.
     """
 
     def rank(
         self,
         interventions,
         evaluator: Callable[[Any], float],
+        metadata_provider: Callable[[Any], dict] | None = None,
     ) -> list[EvaluatedIntervention]:
 
-        ranking = [
-            EvaluatedIntervention(
-                intervention=i,
-                score=evaluator(i),
+        ranking = []
+
+        for intervention in interventions:
+
+            metadata = (
+                metadata_provider(intervention)
+                if metadata_provider
+                else None
             )
-            for i in interventions
-        ]
+
+            ranking.append(
+                EvaluatedIntervention(
+                    intervention=intervention,
+                    score=evaluator(intervention),
+                    metadata=metadata,
+                )
+            )
 
         ranking.sort(key=lambda item: item.score)
 
@@ -41,26 +53,17 @@ class MinimalInterventionEngine:
     def evaluate(
         self,
         interventions,
-        evaluator: Callable[[Any], float],
-    ) -> EvaluatedIntervention | None:
+        evaluator,
+        metadata_provider=None,
+    ):
 
-        ranking = self.rank(interventions, evaluator)
+        ranking = self.rank(
+            interventions,
+            evaluator,
+            metadata_provider,
+        )
 
         return ranking[0] if ranking else None
-
-
-    def filter_improvements(
-        self,
-        interventions,
-        evaluator: Callable[[Any], float],
-        baseline_score: float,
-    ) -> list[EvaluatedIntervention]:
-
-        return [
-            item
-            for item in self.rank(interventions, evaluator)
-            if item.score < baseline_score
-        ]
 
 
     def explain(
@@ -80,37 +83,5 @@ class MinimalInterventionEngine:
                 round(improvement / baseline_score * 100, 2)
                 if baseline_score > 0 else 0.0
             ),
+            "metadata": candidate.metadata or {},
         }
-
-
-    def recommend(
-        self,
-        interventions,
-        evaluator: Callable[[Any], float],
-        baseline_score: float,
-        validator: Callable[[Any], bool] | None = None,
-    ) -> dict | None:
-        """
-        Gera uma recomendação utilizando apenas
-        intervenções válidas.
-        """
-
-        if validator is not None:
-            interventions = [
-                i
-                for i in interventions
-                if validator(i)
-            ]
-
-        best = self.evaluate(
-            interventions,
-            evaluator,
-        )
-
-        if best is None:
-            return None
-
-        return self.explain(
-            best,
-            baseline_score,
-        )
