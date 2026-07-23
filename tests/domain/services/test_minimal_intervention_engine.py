@@ -6,13 +6,42 @@ def test_should_return_none_when_empty():
 
     engine = MinimalInterventionEngine()
 
-    assert engine.evaluate([]) is None
+    result = engine.evaluate([], lambda _: 0)
+
+    assert result is None
 
 
-def test_should_return_first_intervention():
+def test_should_choose_lowest_score():
 
     engine = MinimalInterventionEngine()
 
-    result = engine.evaluate(["A","B"])
+    interventions = ["A", "B", "C"]
 
-    assert result == "A"
+    scores = {
+        "A": 8,
+        "B": 2,
+        "C": 5,
+    }
+
+    result = engine.evaluate(
+        interventions,
+        lambda i: scores[i],
+    )
+
+    assert result.intervention == "B"
+    assert result.score == 2
+
+
+def test_should_call_evaluator_for_all_candidates():
+
+    engine = MinimalInterventionEngine()
+
+    calls = []
+
+    def evaluator(value):
+        calls.append(value)
+        return value
+
+    engine.evaluate([4, 2, 9], evaluator)
+
+    assert calls == [4, 2, 9]
