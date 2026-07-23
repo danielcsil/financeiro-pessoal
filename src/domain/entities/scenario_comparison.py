@@ -3,20 +3,20 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.value_objects import Money
+from src.domain.entities import FinancialHealthScore
 
 
 @dataclass(frozen=True, slots=True)
 class ScenarioComparison:
 
-    original_max_gap: Money
+    current: FinancialHealthScore
 
-    simulated_max_gap: Money
+    projected: FinancialHealthScore
 
-    gap_reduction: Money
+    score_gain: int
 
-    original_recovery_months: int
+    liquidity_gain: float
 
-    simulated_recovery_months: int
+    credit_reduction: float
 
-    recommendation: str
+    negative_days_reduction: int
