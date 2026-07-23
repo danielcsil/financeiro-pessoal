@@ -8,6 +8,8 @@ from .liquidity_analysis import LiquidityAnalysis
 from .planning_period import PlanningPeriod
 from .projection_day import ProjectionDay
 from .recommendation import Recommendation
+from .recurrence_frequency import RecurrenceFrequency
+from .recurring_transaction import RecurringTransaction
 from .timeline_day import TimelineDay
 from .transaction import Transaction
 
@@ -21,6 +23,8 @@ __all__ = [
     "PlanningPeriod",
     "ProjectionDay",
     "Recommendation",
+    "RecurrenceFrequency",
+    "RecurringTransaction",
     "TimelineDay",
     "Transaction",
 ]
