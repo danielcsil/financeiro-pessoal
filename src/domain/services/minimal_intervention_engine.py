@@ -13,7 +13,7 @@ class EvaluatedIntervention:
 
 class MinimalInterventionEngine:
     """
-    Avalia, ordena e filtra intervenções.
+    Avalia, ordena, filtra e explica intervenções.
 
     Quanto menor o score, melhor a intervenção.
     """
@@ -54,13 +54,32 @@ class MinimalInterventionEngine:
         evaluator: Callable[[Any], float],
         baseline_score: float,
     ) -> list[EvaluatedIntervention]:
-        """
-        Retorna apenas intervenções que produzem
-        melhoria em relação ao cenário atual.
-        """
 
         return [
             candidate
             for candidate in self.rank(interventions, evaluator)
             if candidate.score < baseline_score
         ]
+
+
+    def explain(
+        self,
+        candidate: EvaluatedIntervention,
+        baseline_score: float,
+    ) -> dict:
+
+        improvement = baseline_score - candidate.score
+
+        improvement_percent = (
+            (improvement / baseline_score) * 100
+            if baseline_score > 0
+            else 0.0
+        )
+
+        return {
+            "intervention": candidate.intervention,
+            "score": candidate.score,
+            "baseline_score": baseline_score,
+            "improvement": improvement,
+            "improvement_percent": round(improvement_percent, 2),
+        }
