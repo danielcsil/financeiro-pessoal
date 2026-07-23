@@ -1,3 +1,4 @@
+
 """
-Ferramentas auxiliares do projeto.
+Ferramentas de desenvolvimento.
 """
