@@ -16,8 +16,8 @@ class MinimalInterventionEngine:
     """
     Motor genérico para avaliação de intervenções.
 
-    O cálculo do score e das evidências é totalmente
-    delegado ao domínio através de funções injetadas.
+    Toda regra de negócio é injetada através de funções,
+    mantendo o mecanismo desacoplado do domínio financeiro.
     """
 
     def rank(
@@ -31,17 +31,15 @@ class MinimalInterventionEngine:
 
         for intervention in interventions:
 
-            metadata = (
-                metadata_provider(intervention)
-                if metadata_provider
-                else None
-            )
-
             ranking.append(
                 EvaluatedIntervention(
                     intervention=intervention,
                     score=evaluator(intervention),
-                    metadata=metadata,
+                    metadata=(
+                        metadata_provider(intervention)
+                        if metadata_provider
+                        else None
+                    ),
                 )
             )
 
@@ -85,3 +83,66 @@ class MinimalInterventionEngine:
             ),
             "metadata": candidate.metadata or {},
         }
+
+
+    def recommend(
+        self,
+        interventions,
+        evaluator,
+        baseline_score,
+        metadata_provider=None,
+        validator=None,
+    ) -> dict | None:
+
+        if validator is not None:
+            interventions = [
+                i
+                for i in interventions
+                if validator(i)
+            ]
+
+        candidate = self.evaluate(
+            interventions=interventions,
+            evaluator=evaluator,
+            metadata_provider=metadata_provider,
+        )
+
+        if candidate is None:
+            return None
+
+        return self.explain(
+            candidate,
+            baseline_score,
+        )
+
+
+    def recommend_all(
+        self,
+        interventions,
+        evaluator,
+        baseline_score,
+        metadata_provider=None,
+        validator=None,
+    ) -> list[dict]:
+        """
+        Retorna todas as intervenções válidas,
+        ordenadas da melhor para a pior.
+        """
+
+        if validator is not None:
+            interventions = [
+                i
+                for i in interventions
+                if validator(i)
+            ]
+
+        ranking = self.rank(
+            interventions,
+            evaluator,
+            metadata_provider,
+        )
+
+        return [
+            self.explain(item, baseline_score)
+            for item in ranking
+        ]
