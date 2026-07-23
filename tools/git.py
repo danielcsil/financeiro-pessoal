@@ -1,4 +1,3 @@
-
 """
 Ferramentas auxiliares para utilização do Git.
 
@@ -7,6 +6,7 @@ Projeto: Sistema Financeiro Pessoal
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
@@ -26,6 +26,26 @@ def _run(*args: str) -> str:
 
 def current_branch() -> str:
     return _run("git", "branch", "--show-current")
+
+
+def remote_url() -> str:
+    """
+    Retorna a URL do remote origin sem expor credenciais.
+    """
+
+    remote = _run("git", "remote", "get-url", "origin")
+
+    if not remote or remote.startswith("fatal:"):
+        return "Não configurado"
+
+    # Remove usuário/token da URL HTTPS
+    remote = re.sub(
+        r"^(https://)[^@]+@",
+        r"\1",
+        remote,
+    )
+
+    return remote
 
 
 def setup_git(
@@ -54,7 +74,7 @@ def setup_git(
         )
 
     print(f"Branch : {current_branch()}")
-    print(f"Remote : {_run('git', 'remote', 'get-url', 'origin')}")
+    print(f"Remote : {remote_url()}")
 
     print("\nStatus")
     print("-" * 60)
@@ -161,4 +181,3 @@ def release(
 
     commit(version, message)
     push()
-
