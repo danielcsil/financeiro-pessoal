@@ -23,6 +23,7 @@ from .scenario import Scenario
 from .scenario_adjustment import ScenarioAdjustment
 from .scenario_adjustment_type import ScenarioAdjustmentType
 from .scenario_type import ScenarioType
+from .simulation_result import SimulationResult
 from .timeline_day import TimelineDay
 from .transaction import Transaction
 
@@ -51,6 +52,7 @@ __all__ = [
     "ScenarioAdjustment",
     "ScenarioAdjustmentType",
     "ScenarioType",
+    "SimulationResult",
     "TimelineDay",
     "Transaction",
 ]

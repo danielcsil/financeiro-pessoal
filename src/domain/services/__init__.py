@@ -13,6 +13,7 @@ from .recurring_expense_capacity_analyzer import RecurringExpenseCapacityAnalyze
 from .recurring_transaction_expander import RecurringTransactionExpander
 from .scenario_applier import ScenarioApplier
 from .scenario_projector import ScenarioProjector
+from .simulation_engine import SimulationEngine
 
 __all__ = [
     "AvailableCashAnalyzer",
@@ -29,4 +30,5 @@ __all__ = [
     "RecurringTransactionExpander",
     "ScenarioApplier",
     "ScenarioProjector",
+    "SimulationEngine",
 ]
