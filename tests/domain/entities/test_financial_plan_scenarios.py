@@ -1,31 +1,32 @@
 
-from src.domain.entities import (
-    CashFlowTimeline,
-    FinancialGoal,
-    FinancialPlan,
-    PlanningPeriod,
-)
-from src.domain.value_objects import Money
 from datetime import date
 
+from src.domain.entities import (
+    CashFlowTimeline,
+    FinancialPlan,
+    PlanningPeriod,
+    Scenario,
+    ScenarioType,
+)
+from src.domain.value_objects import Money
 
-def test_should_add_goal():
+
+def test_should_add_scenario():
 
     plan = FinancialPlan(
         period=PlanningPeriod(
             start_date=date(2026,1,1),
             end_date=date(2026,12,31),
         ),
-        opening_balance=Money(1000),
+        opening_balance=Money(500),
         timeline=CashFlowTimeline(),
     )
 
-    goal = FinancialGoal(
-        name="Reserva",
-        target_amount=Money(10000),
-        target_date=date(2026,12,31),
+    scenario = Scenario(
+        name="Novo emprego",
+        scenario_type=ScenarioType.CUSTOM,
     )
 
-    plan.add_goal(goal)
+    plan.add_scenario(scenario)
 
-    assert len(plan.goals) == 1
+    assert len(plan.scenarios) == 1
