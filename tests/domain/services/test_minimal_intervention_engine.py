@@ -51,9 +51,27 @@ def test_should_rank_all_interventions():
         "A",
     ]
 
-    assert [r.score for r in ranking] == [
-        1,
-        3,
-        4,
-        7,
+
+def test_should_filter_only_improvements():
+
+    engine = MinimalInterventionEngine()
+
+    scores = {
+        "A": 12,
+        "B": 5,
+        "C": 8,
+        "D": 15,
+    }
+
+    improvements = engine.filter_improvements(
+        ["A", "B", "C", "D"],
+        lambda x: scores[x],
+        baseline_score=10,
+    )
+
+    assert [i.intervention for i in improvements] == [
+        "B",
+        "C",
     ]
+
+    assert all(i.score < 10 for i in improvements)

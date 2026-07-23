@@ -13,7 +13,7 @@ class EvaluatedIntervention:
 
 class MinimalInterventionEngine:
     """
-    Avalia e ordena intervenções por uma função de score.
+    Avalia, ordena e filtra intervenções.
 
     Quanto menor o score, melhor a intervenção.
     """
@@ -46,3 +46,21 @@ class MinimalInterventionEngine:
         ranking = self.rank(interventions, evaluator)
 
         return ranking[0] if ranking else None
+
+
+    def filter_improvements(
+        self,
+        interventions,
+        evaluator: Callable[[Any], float],
+        baseline_score: float,
+    ) -> list[EvaluatedIntervention]:
+        """
+        Retorna apenas intervenções que produzem
+        melhoria em relação ao cenário atual.
+        """
+
+        return [
+            candidate
+            for candidate in self.rank(interventions, evaluator)
+            if candidate.score < baseline_score
+        ]
