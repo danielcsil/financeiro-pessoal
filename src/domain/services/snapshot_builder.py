@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 from src.domain.entities import FinancialSnapshot
-from src.domain.services import LiquidityAnalyzer
-
+from .liquidity_analyzer import LiquidityAnalyzer
 
 class SnapshotBuilder:
 

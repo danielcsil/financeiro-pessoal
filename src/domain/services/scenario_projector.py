@@ -1,8 +1,7 @@
 
 from __future__ import annotations
 
-from src.domain.services import CashFlowProjector
-
+from .cash_flow_projector import CashFlowProjector
 
 class ScenarioProjector:
 

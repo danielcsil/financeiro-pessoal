@@ -1,9 +1,11 @@
-
 from __future__ import annotations
 
 from datetime import date
 
-from src.domain.entities import Transaction
+from src.domain.enums import TransactionType
+from src.domain.value_objects import Money
+
+from .transaction import Transaction
 
 
 class TimelineDay:
@@ -36,6 +38,27 @@ class TimelineDay:
             )
 
         self._transactions.append(transaction)
+
+    def income(self) -> Money:
+        total = Money.zero()
+
+        for transaction in self._transactions:
+            if transaction.type == TransactionType.INCOME:
+                total += transaction.amount
+
+        return total
+
+    def expense(self) -> Money:
+        total = Money.zero()
+
+        for transaction in self._transactions:
+            if transaction.type == TransactionType.EXPENSE:
+                total += transaction.amount
+
+        return total
+
+    def balance_change(self) -> Money:
+        return self.income() - self.expense()
 
     def __len__(self) -> int:
         return len(self._transactions)

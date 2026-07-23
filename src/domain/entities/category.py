@@ -11,7 +11,7 @@ class Category:
     def __init__(
         self,
         name: str,
-        type: CategoryType,
+        type: CategoryType = CategoryType.EXPENSE,
         id: UUID | None = None,
     ):
         self._id = id or uuid4()

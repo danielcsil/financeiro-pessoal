@@ -5,10 +5,8 @@ from src.domain.entities import (
     FinancialHealth,
     FinancialHealthLevel,
 )
-from src.domain.services import (
-    CapitalNeedAnalyzer,
-    CreditDependencyAnalyzer,
-)
+from .capital_need_analyzer import CapitalNeedAnalyzer
+from .credit_dependency_analyzer import CreditDependencyAnalyzer
 
 
 class FinancialHealthAnalyzer:

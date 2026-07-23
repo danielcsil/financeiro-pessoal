@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.entities import InterventionSimulation
+from .intervention_simulation import InterventionSimulation
 
 
 @dataclass(frozen=True, slots=True)

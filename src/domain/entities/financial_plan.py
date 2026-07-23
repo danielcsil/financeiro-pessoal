@@ -3,12 +3,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from src.domain.entities import (
-    CashFlowTimeline,
-    FinancialGoal,
-    PlanningPeriod,
-    Scenario,
-)
+from .cash_flow_timeline import CashFlowTimeline
+from .financial_goal import FinancialGoal
+from .planning_period import PlanningPeriod
+from .scenario import Scenario
 from src.domain.value_objects import Money
 
 

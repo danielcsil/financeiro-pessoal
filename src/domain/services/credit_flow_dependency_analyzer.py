@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 from src.domain.entities import CreditFlowDependency
-from src.domain.services import LiquidityGapAnalyzer
-
+from .liquidity_gap_analyzer import LiquidityGapAnalyzer
 
 class CreditFlowDependencyAnalyzer:
 

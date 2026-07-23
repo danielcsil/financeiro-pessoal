@@ -3,10 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.entities import (
-    CashFlowProjection,
-    LiquidityAnalysis,
-)
+from .cash_flow_projection import CashFlowProjection
+from .liquidity_analysis import LiquidityAnalysis
 
 
 @dataclass(frozen=True, slots=True)

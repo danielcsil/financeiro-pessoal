@@ -4,11 +4,9 @@ from __future__ import annotations
 from src.domain.entities import (
     SimulationResult,
 )
-from src.domain.services import (
-    CashFlowProjector,
-    LiquidityAnalyzer,
-    ScenarioApplier,
-)
+from .cash_flow_projector import CashFlowProjector
+from .liquidity_analyzer import LiquidityAnalyzer
+from .scenario_applier import ScenarioApplier
 
 
 class SimulationEngine:

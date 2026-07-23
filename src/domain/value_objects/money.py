@@ -1,4 +1,3 @@
-
 """
 Money Value Object.
 
@@ -9,15 +8,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_UP
+from functools import total_ordering
 from typing import Union
 
 
 Number = Union[int, float, Decimal]
 
 
-@dataclass(frozen=True, slots=True)
+@total_ordering
+@dataclass(frozen=True, slots=True, eq=False)
 class Money:
-
     value: Decimal
 
     def __post_init__(self) -> None:
@@ -63,6 +63,16 @@ class Money:
 
     def copy(self) -> "Money":
         return Money(self.value)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Money):
+            return NotImplemented
+        return self.value == other.value
+
+    def __lt__(self, other: "Money") -> bool:
+        if not isinstance(other, Money):
+            return NotImplemented
+        return self.value < other.value
 
     def __add__(self, other: "Money") -> "Money":
         if not isinstance(other, Money):

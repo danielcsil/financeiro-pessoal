@@ -3,15 +3,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.entities import (
-    CashFlowProjection,
-    LiquidityAnalysis,
-    FinancialHealthScore,
-    AdvisorResult,
-    AdvisorReport,
-    OptimizationResult,
-    ScenarioComparison,
-)
+from .advisor_report import AdvisorReport
+from .advisor_result import AdvisorResult
+from .cash_flow_projection import CashFlowProjection
+from .financial_health_score import FinancialHealthScore
+from .liquidity_analysis import LiquidityAnalysis
+from .optimization_result import OptimizationResult
+from .scenario_comparison import ScenarioComparison
 
 
 @dataclass(frozen=True, slots=True)

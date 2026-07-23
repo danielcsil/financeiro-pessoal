@@ -3,10 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.entities import (
-    AdvisorResult,
-    FinancialHealthScore,
-)
+from .advisor_result import AdvisorResult
+from .financial_health_score import FinancialHealthScore
 
 
 @dataclass(frozen=True, slots=True)

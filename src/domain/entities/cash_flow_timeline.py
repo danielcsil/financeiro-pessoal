@@ -1,9 +1,9 @@
-
 from __future__ import annotations
 
 from datetime import date, timedelta
 
-from src.domain.entities import TimelineDay, Transaction
+from .timeline_day import TimelineDay
+from .transaction import Transaction
 
 
 class CashFlowTimeline:
@@ -48,3 +48,12 @@ class CashFlowTimeline:
         self.day(
             transaction.transaction_date
         ).add_transaction(transaction)
+
+    def __iter__(self):
+        return iter(self._days.values())
+
+    def __len__(self) -> int:
+        return len(self._days)
+
+    def __contains__(self, day: date) -> bool:
+        return day in self._days

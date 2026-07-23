@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 from src.domain.entities import PlanEvaluation
-from src.domain.services import (
-    FinancialHealthAnalyzer,
-    GoalAnalyzer,
-)
+from .financial_health_analyzer import FinancialHealthAnalyzer
+from .goal_analyzer import GoalAnalyzer
 
 
 class PlanEvaluator:

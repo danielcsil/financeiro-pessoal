@@ -3,13 +3,11 @@ from __future__ import annotations
 
 from src.domain.entities import PlanningResult
 
-from src.domain.services import (
-    CashFlowProjector,
-    LiquidityAnalyzer,
-    FinancialHealthScorer,
-    FinancialAdvisor,
-    RecommendationExplainer,
-)
+from .cash_flow_projector import CashFlowProjector
+from .financial_advisor import FinancialAdvisor
+from .financial_health_scorer import FinancialHealthScorer
+from .liquidity_analyzer import LiquidityAnalyzer
+from .recommendation_explainer import RecommendationExplainer
 
 
 class FinancialPlanner:
@@ -32,7 +30,10 @@ class FinancialPlanner:
         financeiro utilizando os serviços do domínio.
         """
 
-        projection = self.projector.project(financial_plan)
+        projection = self.projector.project(
+            financial_plan.timeline,
+            financial_plan.opening_balance,
+        )
 
         liquidity = self.liquidity.analyze(projection)
 

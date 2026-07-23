@@ -4,8 +4,7 @@ from __future__ import annotations
 from itertools import combinations
 
 from src.domain.entities import OptimizationResult
-from src.domain.services import InterventionSimulator
-
+from .intervention_simulator import InterventionSimulator
 
 class CashFlowOptimizer:
     """

@@ -31,7 +31,7 @@ class Account:
     def __init__(
         self,
         name: str,
-        type: AccountType,
+        type: AccountType = AccountType.CHECKING,
         id: UUID | None = None,
     ):
         self.id = id or uuid4()

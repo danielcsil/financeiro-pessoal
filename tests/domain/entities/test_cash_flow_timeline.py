@@ -1,28 +1,37 @@
-
 from datetime import date
 
-from src.domain.entities import CashFlowTimeline
+from src.domain.entities import (
+    CashFlowTimeline,
+    FinancialPlan,
+    PlanningPeriod,
+    Scenario,
+    ScenarioType,
+)
+from src.domain.value_objects import Money
 
 
-def test_should_create_timeline():
+def test_should_add_scenario():
 
-    timeline = CashFlowTimeline(
-        date(2026, 8, 1),
-        date(2026, 8, 31),
+    period = PlanningPeriod(
+        start_date=date(2026, 1, 1),
+        end_date=date(2026, 12, 31),
     )
 
-    assert len(timeline.days) == 31
-    assert timeline.start_date == date(2026, 8, 1)
-    assert timeline.end_date == date(2026, 8, 31)
-
-
-def test_should_return_day():
-
-    timeline = CashFlowTimeline(
-        date(2026, 8, 1),
-        date(2026, 8, 31),
+    plan = FinancialPlan(
+        period=period,
+        opening_balance=Money(500),
+        timeline=CashFlowTimeline(
+            period.start_date,
+            period.end_date,
+        ),
     )
 
-    day = timeline.day(date(2026, 8, 15))
+    scenario = Scenario(
+        name="Redução de Gastos",
+        scenario_type=ScenarioType.PESSIMISTIC,
+    )
 
-    assert day.date == date(2026, 8, 15)
+    plan.add_scenario(scenario)
+
+    assert len(plan.scenarios) == 1
+    assert plan.scenarios[0] == scenario

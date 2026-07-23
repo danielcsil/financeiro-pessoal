@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.entities import FinancialHealthLevel
+from .financial_health_level import FinancialHealthLevel
 
 
 @dataclass(frozen=True, slots=True)

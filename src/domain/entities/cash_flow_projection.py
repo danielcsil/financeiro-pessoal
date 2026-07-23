@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from src.domain.entities import ProjectionDay
+from .projection_day import ProjectionDay
 
 
 class CashFlowProjection:

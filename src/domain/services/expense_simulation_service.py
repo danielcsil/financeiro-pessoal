@@ -4,9 +4,7 @@ from __future__ import annotations
 from src.domain.entities import (
     ExpenseSimulationResult,
 )
-from src.domain.services import (
-    RecurringExpenseCapacityAnalyzer,
-)
+from .recurring_expense_capacity_analyzer import RecurringExpenseCapacityAnalyzer
 from src.domain.value_objects import Money
 
 

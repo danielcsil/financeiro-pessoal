@@ -1,4 +1,3 @@
-
 from datetime import date
 
 from src.domain.entities import (
@@ -13,13 +12,18 @@ from src.domain.value_objects import Money
 
 def test_should_add_scenario():
 
+    period = PlanningPeriod(
+        start_date=date(2026, 1, 1),
+        end_date=date(2026, 12, 31),
+    )
+
     plan = FinancialPlan(
-        period=PlanningPeriod(
-            start_date=date(2026,1,1),
-            end_date=date(2026,12,31),
-        ),
+        period=period,
         opening_balance=Money(500),
-        timeline=CashFlowTimeline(),
+        timeline=CashFlowTimeline(
+            period.start_date,
+            period.end_date,
+        ),
     )
 
     scenario = Scenario(

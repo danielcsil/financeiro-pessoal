@@ -7,8 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.value_objects import Money
-
+from .money import Money
 
 @dataclass(frozen=True, slots=True)
 class DailyCashFlow:

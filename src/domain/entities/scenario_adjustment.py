@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.domain.entities import Transaction
+from .transaction import Transaction
 from src.domain.entities.scenario_adjustment_type import (
     ScenarioAdjustmentType,
 )

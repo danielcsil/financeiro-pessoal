@@ -1,10 +1,8 @@
-
 from __future__ import annotations
 
-from src.domain.services import (
-    StrategyGenerator,
-    InterventionSimulator,
-)
+from .intervention_planner import InterventionPlanner
+from .simulation_engine import SimulationEngine
+from .strategy_generator import StrategyGenerator
 
 
 class FinancialAdvisor:
@@ -14,6 +12,8 @@ class FinancialAdvisor:
     Diagnóstico
         ↓
     Estratégias
+        ↓
+    Planejamento das intervenções
         ↓
     Simulações
         ↓
@@ -25,8 +25,7 @@ class FinancialAdvisor:
     def __init__(self):
 
         self._generator = StrategyGenerator()
-        self._simulator = InterventionSimulator()
-
+        self._planner = InterventionPlanner()
 
     def recommend(
         self,
@@ -36,18 +35,61 @@ class FinancialAdvisor:
     ):
 
         strategies = self._generator.generate(
-            diagnosis
+            financial_plan,
+            diagnosis,
         )
 
-        ranking = self._simulator.simulate_all(
-            financial_plan=financial_plan,
-            interventions=strategies,
-            scorer=scorer,
-        )
+        engine = SimulationEngine()
+        ranking = []
 
-        from src.domain.entities import AdvisorResult
+        from src.domain.entities import AdvisorResult, InterventionSimulation
+
+        for strategy in strategies:
+            adjustment_groups = self._planner.build(
+                financial_plan,
+                [strategy],
+            )
+
+            adjustments = adjustment_groups[0] if adjustment_groups else []
+
+            simulation = engine.simulate(
+                financial_plan=financial_plan,
+                adjustments=adjustments,
+            )
+
+            ranking.append(
+                InterventionSimulation(
+                    intervention=strategy,
+                    result=simulation,
+                    score=scorer(simulation),
+                )
+            )
+
+        ranking.sort(key=lambda item: item.score)
 
         return AdvisorResult(
             best=ranking[0] if ranking else None,
             ranking=ranking,
+        )
+
+    def analyze(self, financial_plan):
+        diagnosis = self._build_diagnosis(financial_plan)
+
+        return self.recommend(
+            financial_plan=financial_plan,
+            diagnosis=diagnosis,
+            scorer=lambda simulation: simulation.liquidity.minimum_balance,
+        )
+
+    def _build_diagnosis(self, financial_plan):
+        from types import SimpleNamespace
+
+        baseline = SimulationEngine().simulate(
+            financial_plan=financial_plan,
+            adjustments=[],
+        )
+
+        return SimpleNamespace(
+            has_financing_dependency=False,
+            has_negative_balance=baseline.liquidity.has_negative_balance,
         )

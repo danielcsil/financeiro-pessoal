@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 from src.domain.entities import InterventionSimulation
-from src.domain.services import SimulationEngine
-
+from .simulation_engine import SimulationEngine
 
 class InterventionSimulator:
 
@@ -19,10 +18,15 @@ class InterventionSimulator:
         engine = SimulationEngine()
 
         for intervention in interventions:
+            adjustments = (
+                intervention
+                if isinstance(intervention, (list, tuple))
+                else []
+            )
 
             result = engine.simulate(
                 financial_plan=financial_plan,
-                adjustments=[intervention],
+                adjustments=adjustments,
             )
 
             simulations.append(

@@ -58,6 +58,60 @@ class MinimalInterventionEngine:
         return ranking[0] if ranking else None
 
 
+    def recommend(
+        self,
+        interventions,
+        evaluator,
+        baseline_score: float,
+        validator=None,
+        metadata_provider=None,
+    ):
+
+        candidates = [
+            intervention
+            for intervention in interventions
+            if validator is None or validator(intervention)
+        ]
+
+        best = self.evaluate(
+            candidates,
+            evaluator,
+            metadata_provider,
+        )
+
+        if best is None:
+            return None
+
+        return self.explain(best, baseline_score)
+
+
+    def recommend_all(
+        self,
+        interventions,
+        evaluator,
+        baseline_score: float,
+        validator=None,
+        metadata_provider=None,
+    ) -> list[dict]:
+
+        candidates = [
+            intervention
+            for intervention in interventions
+            if validator is None or validator(intervention)
+        ]
+
+        ranking = self.rank(
+            candidates,
+            evaluator,
+            metadata_provider,
+        )
+
+        return [
+            self.explain(candidate, baseline_score)
+            for candidate in ranking
+        ]
+
+
     def explain(
         self,
         candidate: EvaluatedIntervention,

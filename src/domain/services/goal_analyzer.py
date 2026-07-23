@@ -28,7 +28,7 @@ class GoalAnalyzer:
         difference = projected_balance - goal.target_amount
 
         return GoalAnalysis(
-            achieved=difference >= 0,
+            achieved=difference >= difference.zero(),
             projected_balance=projected_balance,
             target_amount=goal.target_amount,
             difference=difference,

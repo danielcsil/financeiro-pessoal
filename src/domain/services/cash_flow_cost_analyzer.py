@@ -2,11 +2,10 @@
 from __future__ import annotations
 
 from src.domain.entities import CashFlowCost
-from src.domain.services import CreditFlowDependencyAnalyzer
+from .credit_flow_dependency_analyzer import CreditFlowDependencyAnalyzer
 
 
 class CashFlowCostAnalyzer:
-
     def analyze(
         self,
         projection,

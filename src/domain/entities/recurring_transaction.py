@@ -4,7 +4,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 
-from src.domain.entities import Account, Category
+from .account import Account
+from .category import Category
 from src.domain.entities.recurrence_frequency import RecurrenceFrequency
 from src.domain.value_objects import Money
 

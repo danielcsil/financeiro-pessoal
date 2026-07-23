@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 from src.domain.entities import CashFlowRecoveryPlan
-from src.domain.services import (
-    CapitalNeedAnalyzer,
-)
+from .capital_need_analyzer import CapitalNeedAnalyzer
 
 
 class CashFlowRecoveryPlanner:
