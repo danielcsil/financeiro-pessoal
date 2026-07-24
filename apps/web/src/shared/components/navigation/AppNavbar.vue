@@ -47,9 +47,9 @@ const isAuthenticated = computed(() => false);
       <RouterLink
         to="/"
         class="navbar__brand"
-        @click="closeMenu"
       >
-        Financial Advisor
+        <span class="navbar__logo">PF</span>
+        <span>Personal Finance</span>
       </RouterLink>
 
       <button

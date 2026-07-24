@@ -1,0 +1,501 @@
+/* ============================================================
+   PERSONAL FINANCE
+   Landing Page
+   ============================================================ */
+
+:root {
+
+    --landing-max-width: 1280px;
+
+    --section-padding-y: 110px;
+
+    --section-padding-x: 40px;
+
+    --hero-gradient:
+            linear-gradient(
+                    180deg,
+                    #ffffff 0%,
+                    #f8fafc 100%
+            );
+
+}
+
+/* ============================================================
+   Containers
+   ============================================================ */
+
+.landing-container {
+
+    max-width: var(--landing-max-width);
+
+    margin: 0 auto;
+
+    padding-left: var(--section-padding-x);
+
+    padding-right: var(--section-padding-x);
+
+}
+
+.landing-section {
+
+    padding-top: var(--section-padding-y);
+
+    padding-bottom: var(--section-padding-y);
+
+}
+
+/* ============================================================
+   Tipografia
+   ============================================================ */
+
+.section-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 18px;
+
+    border-radius: 999px;
+
+    background: #dbeafe;
+
+    color: var(--color-primary);
+
+    font-weight: 600;
+
+    font-size: .95rem;
+
+    margin-bottom: 24px;
+
+}
+
+.section-title {
+
+    font-size: 2.8rem;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    color: var(--color-text-primary);
+
+    margin-bottom: 24px;
+
+}
+
+.section-subtitle {
+
+    font-size: 1.25rem;
+
+    line-height: 1.8;
+
+    color: var(--color-text-secondary);
+
+    margin-bottom: 20px;
+
+}
+
+.section-description {
+
+    color: var(--color-text-secondary);
+
+    line-height: 1.9;
+
+    font-size: 1.05rem;
+
+}
+
+/* ============================================================
+   Botões
+   ============================================================ */
+
+.landing-buttons {
+
+    display: flex;
+
+    gap: 18px;
+
+    flex-wrap: wrap;
+
+    margin-top: 40px;
+
+}
+
+.landing-buttons .btn {
+
+    min-width: 190px;
+
+}
+
+/* ============================================================
+   Cards
+   ============================================================ */
+
+.landing-card {
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    border: 1px solid var(--color-border);
+
+    transition: .25s;
+
+    box-shadow:
+
+            0 12px 30px rgba(15,23,42,.05);
+
+}
+
+.landing-card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow:
+
+            0 20px 45px rgba(15,23,42,.12);
+
+}
+
+.landing-card-title {
+
+    font-size: 1.25rem;
+
+    font-weight: 700;
+
+    margin-bottom: 12px;
+
+    color: var(--color-text-primary);
+
+}
+
+.landing-card-text {
+
+    color: var(--color-text-secondary);
+
+    line-height: 1.8;
+
+}
+
+/* ============================================================
+   Dashboard Preview
+   ============================================================ */
+
+.dashboard-preview {
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    background: white;
+
+    border: 1px solid var(--color-border);
+
+    box-shadow:
+
+            0 30px 70px rgba(15,23,42,.08);
+
+}
+
+.dashboard-preview img {
+
+    display: block;
+
+    width: 100%;
+
+}
+
+/* ============================================================
+   Placeholders
+   ============================================================ */
+
+.image-placeholder {
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+
+            linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ffffff
+            );
+
+    border: 2px dashed #bfdbfe;
+
+    color: var(--color-primary);
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+}
+
+.image-placeholder::before {
+
+    content: "Imagem ilustrativa";
+
+}
+
+/* ============================================================
+   Listas
+   ============================================================ */
+
+.landing-list {
+
+    margin-top: 32px;
+
+    display: grid;
+
+    gap: 18px;
+
+}
+
+.landing-list-item {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 18px;
+
+}
+
+.landing-list-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 14px;
+
+    background: #eff6ff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--color-primary);
+
+    font-size: 1.4rem;
+
+}
+
+.landing-list-title {
+
+    font-weight: 700;
+
+    margin-bottom: 6px;
+
+    color: var(--color-text-primary);
+
+}
+
+.landing-list-text {
+
+    color: var(--color-text-secondary);
+
+    line-height: 1.7;
+
+}
+
+/* ============================================================
+   Estatísticas
+   ============================================================ */
+
+.stats-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3,1fr);
+
+    gap: 24px;
+
+    margin-top: 60px;
+
+}
+
+.stat-card {
+
+    padding: 24px;
+
+    background: white;
+
+    border-radius: 18px;
+
+    border: 1px solid var(--color-border);
+
+    text-align: center;
+
+}
+
+.stat-number {
+
+    font-size: 2rem;
+
+    font-weight: 800;
+
+    color: var(--color-primary);
+
+}
+
+.stat-label {
+
+    margin-top: 8px;
+
+    color: var(--color-text-secondary);
+
+}
+
+/* ============================================================
+   Animações
+   ============================================================ */
+
+.fade-up {
+
+    opacity: 0;
+
+    transform: translateY(30px);
+
+    animation: fadeUp .8s ease forwards;
+
+}
+
+.fade-delay-1 {
+
+    animation-delay: .15s;
+
+}
+
+.fade-delay-2 {
+
+    animation-delay: .30s;
+
+}
+
+.fade-delay-3 {
+
+    animation-delay: .45s;
+
+}
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(30px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+/* ============================================================
+   Responsividade
+   ============================================================ */
+
+@media (max-width:1200px) {
+
+    :root {
+
+        --section-padding-x:32px;
+
+    }
+
+}
+
+@media (max-width:992px) {
+
+    :root {
+
+        --section-padding-y:90px;
+
+    }
+
+    .section-title {
+
+        font-size:2.2rem;
+
+    }
+
+    .stats-grid {
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media (max-width:768px) {
+
+    :root {
+
+        --section-padding-y:70px;
+
+        --section-padding-x:20px;
+
+    }
+
+    .section-title {
+
+        font-size:1.9rem;
+
+    }
+
+    .section-subtitle {
+
+        font-size:1.05rem;
+
+    }
+
+    .landing-buttons {
+
+        flex-direction:column;
+
+    }
+
+    .landing-buttons .btn {
+
+        width:100%;
+
+    }
+
+}
+
+@media (max-width:480px) {
+
+    .section-title {
+
+        font-size:1.7rem;
+
+    }
+
+}
