@@ -1,7 +1,5 @@
 /* ==========================================================================
    BUTTONS
-   ==========================================================================
-   Sistema de Botões
    ========================================================================== */
 
 .btn {
@@ -11,17 +9,18 @@
   gap: var(--space-2);
 
   min-height: 44px;
-
   padding: 0 var(--space-5);
 
-  border: 1px solid transparent;
+  border: var(--border-width) solid transparent;
   border-radius: var(--radius-md);
 
+  font-family: var(--font-family-base);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
 
   cursor: pointer;
   user-select: none;
+  text-decoration: none;
 
   transition:
     background-color var(--transition-fast),
@@ -29,6 +28,8 @@
     color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
+
+  white-space: nowrap;
 }
 
 .btn:hover {
@@ -36,19 +37,20 @@
 }
 
 .btn:active {
-  transform: scale(.98);
+  transform: translateY(0);
 }
 
 .btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, .20);
+  box-shadow: 0 0 0 4px rgba(31, 58, 95, .18);
 }
 
 .btn:disabled,
 .btn.disabled {
-  opacity: .55;
+  opacity: .6;
   cursor: not-allowed;
   pointer-events: none;
+  transform: none;
 }
 
 /* ==========================================================================
@@ -57,11 +59,13 @@
 
 .btn-primary {
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
 }
 
 .btn-primary:hover {
   background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 /* ==========================================================================
@@ -70,11 +74,13 @@
 
 .btn-secondary {
   background: var(--color-secondary);
-  color: #ffffff;
+  color: var(--color-text-inverse);
+  border-color: var(--color-secondary);
 }
 
 .btn-secondary:hover {
   background: var(--color-secondary-hover);
+  border-color: var(--color-secondary-hover);
 }
 
 /* ==========================================================================
@@ -84,12 +90,12 @@
 .btn-outline {
   background: transparent;
   color: var(--color-primary);
-  border-color: var(--color-primary);
+  border-color: var(--color-border);
 }
 
 .btn-outline:hover {
-  background: var(--color-primary);
-  color: #ffffff;
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
 }
 
 /* ==========================================================================
@@ -99,10 +105,11 @@
 .btn-ghost {
   background: transparent;
   color: var(--color-primary);
+  border-color: transparent;
 }
 
 .btn-ghost:hover {
-  background: rgba(15, 118, 110, .08);
+  background: rgba(31, 58, 95, .08);
 }
 
 /* ==========================================================================
@@ -111,11 +118,28 @@
 
 .btn-success {
   background: var(--color-success);
-  color: #ffffff;
+  color: var(--color-text-inverse);
+  border-color: var(--color-success);
 }
 
 .btn-success:hover {
-  filter: brightness(.95);
+  background: var(--color-success-hover);
+  border-color: var(--color-success-hover);
+}
+
+/* ==========================================================================
+   WARNING
+   ========================================================================== */
+
+.btn-warning {
+  background: var(--color-warning);
+  color: var(--color-text-inverse);
+  border-color: var(--color-warning);
+}
+
+.btn-warning:hover {
+  background: var(--color-warning-hover);
+  border-color: var(--color-warning-hover);
 }
 
 /* ==========================================================================
@@ -124,11 +148,13 @@
 
 .btn-danger {
   background: var(--color-danger);
-  color: #ffffff;
+  color: var(--color-text-inverse);
+  border-color: var(--color-danger);
 }
 
 .btn-danger:hover {
-  filter: brightness(.95);
+  background: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
 }
 
 /* ==========================================================================
@@ -161,7 +187,7 @@
 }
 
 /* ==========================================================================
-   ICONS
+   ICON BUTTONS
    ========================================================================== */
 
 .btn-icon {
@@ -186,14 +212,14 @@
   flex-shrink: 0;
 }
 
-.btn-lg svg {
-  width: 20px;
-  height: 20px;
-}
-
 .btn-sm svg {
   width: 16px;
   height: 16px;
+}
+
+.btn-lg svg {
+  width: 20px;
+  height: 20px;
 }
 
 /* ==========================================================================
@@ -218,7 +244,7 @@
   border-top-color: #ffffff;
   border-radius: 50%;
 
-  animation: btn-spin .7s linear infinite;
+  animation: btn-spin .8s linear infinite;
 }
 
 /* ==========================================================================
@@ -229,8 +255,8 @@
   display: inline-flex;
 }
 
-.btn-group .btn {
-  border-radius: 0;
+.btn-group .btn:not(:first-child) {
+  margin-left: -1px;
 }
 
 .btn-group .btn:first-child {
@@ -243,11 +269,16 @@
   border-bottom-right-radius: var(--radius-md);
 }
 
+.btn-group .btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
 /* ==========================================================================
    ANIMATION
    ========================================================================== */
 
 @keyframes btn-spin {
+
   from {
     transform: rotate(0deg);
   }
@@ -255,4 +286,5 @@
   to {
     transform: rotate(360deg);
   }
+
 }
