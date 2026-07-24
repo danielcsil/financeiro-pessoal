@@ -1,9 +1,49 @@
-<template>
-  <RouterView />
-</template>
-
 <script setup lang="ts">
+import { ref } from "vue";
+
+import {
+  BaseButton,
+  BaseCard,
+  BaseInput,
+} from "./shared/components/base";
+
+const name = ref("");
 </script>
 
-<style>
-</style>
+<template>
+  <div class="container py-4">
+
+    <BaseCard>
+
+      <template #header>
+
+        <h2 class="heading-lg">
+          Financial Advisor
+        </h2>
+
+      </template>
+
+      <BaseInput
+        v-model="name"
+        label="Seu nome"
+        placeholder="Digite seu nome"
+      />
+
+      <div class="mt-4">
+
+        <BaseButton>
+          Entrar
+        </BaseButton>
+
+      </div>
+
+      <template #footer>
+
+        {{ name || "Informe seu nome." }}
+
+      </template>
+
+    </BaseCard>
+
+  </div>
+</template>
