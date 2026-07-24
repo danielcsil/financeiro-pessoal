@@ -1,0 +1,279 @@
+/* ==========================================================================
+   CARDS
+   ==========================================================================
+   Sistema de Cards
+   ========================================================================== */
+
+.card {
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   CLICKABLE
+   ========================================================================== */
+
+.card-clickable {
+  cursor: pointer;
+}
+
+.card-clickable:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-primary);
+}
+
+.card-clickable:active {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: var(--space-5);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-title {
+  margin: 0;
+
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+
+  color: var(--color-text);
+}
+
+.card-subtitle {
+  margin-top: var(--space-1);
+
+  font-size: var(--font-size-sm);
+
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   BODY
+   ========================================================================== */
+
+.card-body {
+  flex: 1;
+  padding: var(--space-5);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+
+  padding: var(--space-5);
+
+  border-top: 1px solid var(--color-border);
+
+  background: rgba(0,0,0,.01);
+}
+
+/* ==========================================================================
+   METRIC CARD
+   ========================================================================== */
+
+.card-metric {
+  padding: var(--space-5);
+}
+
+.card-metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.card-metric-value {
+  margin-top: var(--space-2);
+
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+
+  color: var(--color-text);
+}
+
+.card-metric-change {
+  margin-top: var(--space-2);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.card-metric-change.positive {
+  color: var(--color-success);
+}
+
+.card-metric-change.negative {
+  color: var(--color-danger);
+}
+
+.card-metric-change.warning {
+  color: var(--color-warning);
+}
+
+/* ==========================================================================
+   STATUS
+   ========================================================================== */
+
+.card-success {
+  border-left: 4px solid var(--color-success);
+}
+
+.card-warning {
+  border-left: 4px solid var(--color-warning);
+}
+
+.card-danger {
+  border-left: 4px solid var(--color-danger);
+}
+
+.card-info {
+  border-left: 4px solid var(--color-info);
+}
+
+/* ==========================================================================
+   ICON
+   ========================================================================== */
+
+.card-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary-light);
+
+  color: var(--color-primary);
+
+  flex-shrink: 0;
+}
+
+.card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ==========================================================================
+   HORIZONTAL CARD
+   ========================================================================== */
+
+.card-horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.card-horizontal .card-body {
+  flex: 1;
+}
+
+/* ==========================================================================
+   IMAGE
+   ========================================================================== */
+
+.card-image {
+  width: 100%;
+  display: block;
+}
+
+.card-image img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   LIST CARD
+   ========================================================================== */
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+
+  padding: var(--space-4);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-list-item:last-child {
+  border-bottom: none;
+}
+
+/* ==========================================================================
+   EMPTY STATE
+   ========================================================================== */
+
+.card-empty {
+  padding: var(--space-10);
+
+  text-align: center;
+
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  .card-header,
+  .card-footer {
+    padding: var(--space-4);
+  }
+
+  .card-body {
+    padding: var(--space-4);
+  }
+
+  .card-horizontal {
+    flex-direction: column;
+  }
+
+}

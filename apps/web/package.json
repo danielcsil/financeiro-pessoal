@@ -10,7 +10,9 @@
     "type-check": "vue-tsc -b"
   },
   "dependencies": {
-    "vue": "^3.5.0"
+    "pinia": "^4.0.2",
+    "vue": "^3.5.0",
+    "vue-router": "^4.4.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
