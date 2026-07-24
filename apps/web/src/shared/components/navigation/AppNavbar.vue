@@ -48,8 +48,52 @@ const isAuthenticated = computed(() => false);
         to="/"
         class="navbar__brand"
       >
-        <span class="navbar__logo">PF</span>
-        <span>Personal Finance</span>
+        <svg
+          class="navbar__logo"
+          viewBox="0 0 32 32"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <!-- Base -->
+          <path
+            d="M4 28H28"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+
+          <!-- Barras -->
+          <rect
+            x="6"
+            y="17"
+            width="5"
+            height="9"
+            rx="1.5"
+            fill="#60A5FA"
+          />
+
+          <rect
+            x="13.5"
+            y="10"
+            width="5"
+            height="16"
+            rx="1.5"
+            fill="#3B82F6"
+          />
+
+          <rect
+            x="21"
+            y="4"
+            width="5"
+            height="22"
+            rx="1.5"
+            fill="currentColor"
+          />
+        </svg>
+
+        <span class="navbar__brand-text">
+          Personal Finance
+        </span>
       </RouterLink>
 
       <button
@@ -131,12 +175,29 @@ const isAuthenticated = computed(() => false);
 }
 
 .navbar__brand {
-  font-size: 1.35rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
 
   color: var(--color-primary);
-
   text-decoration: none;
+
+  flex-shrink: 0;
+}
+
+.navbar__logo {
+  width: 48px;
+  height: 48px;
+
+  display: block;
+  flex-shrink: 0;
+}
+
+.navbar__brand-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .navbar__menu {
@@ -179,30 +240,38 @@ const isAuthenticated = computed(() => false);
 @media (max-width: 900px) {
 
   .navbar__container {
-    flex-wrap: wrap;
-  }
+    max-width: 1280px;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1rem 2rem;
+    gap: 2rem;
+}
 
   .navbar__toggle {
     display: block;
   }
 
   .navbar__menu {
-    display: none;
-
-    width: 100%;
-    flex-direction: column;
-    justify-content: flex-start;
-
-    padding-top: 1rem;
-  }
+    display: flex;
+    gap: 1.5rem;
+    flex: 1;
+    justify-content: center;
+}
 
   .navbar__menu--open {
     display: flex;
   }
 
   .navbar__actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
+    display: flex;
+    gap: .75rem;
+
+    margin-left: auto;
+    flex-shrink: 0;
+}
 }
 </style>

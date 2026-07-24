@@ -11,7 +11,7 @@
         <div class="dashboard-preview">
 
           <img
-              src="@/assets/images/hero-finance.png"
+              src="@/assets/images/hero-about.png"
               alt="Dashboard do Personal Finance"
           />
 

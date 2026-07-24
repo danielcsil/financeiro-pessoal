@@ -94,22 +94,17 @@
 .dashboard-preview img{
 
     width:100%;
-    max-width:1100px;
+    max-width:1280px;
 
-    border-radius:24px;
+    display:block;
 
-    box-shadow:var(--shadow-xl);
+    transition:transform .35s ease;
 
-    border:1px solid var(--color-border);
-
-    transition:.35s;
 }
 
 .dashboard-preview img:hover{
 
-    transform:translateY(-8px);
-
-    box-shadow:0 30px 80px rgba(0,0,0,.15);
+    transform:translateY(-6px);
 
 }
 

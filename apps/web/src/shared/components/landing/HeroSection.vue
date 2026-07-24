@@ -104,7 +104,7 @@
           -->
 
           <img
-            src="@/assets/images/hero-finance.png"
+            src="@/assets/images/hero-init.png"
             alt="Dashboard do Personal Finance"
             class="hero-image"
           />
@@ -141,7 +141,7 @@ import { RouterLink } from "vue-router";
 
 .hero__container{
 
-    max-width:1280px;
+    max-width:1440px;
 
     margin:auto;
 
@@ -151,7 +151,7 @@ import { RouterLink } from "vue-router";
             1.1fr
             0.9fr;
 
-    gap:80px;
+    gap:32px;
 
     align-items:center;
 
@@ -291,7 +291,7 @@ import { RouterLink } from "vue-router";
 
     display:flex;
 
-    justify-content:center;
+    justify-content:flex-end;
 
     align-items:center;
 
@@ -300,34 +300,39 @@ import { RouterLink } from "vue-router";
 .hero__image-wrapper{
 
     width:100%;
+    
+    max-width:900px;
 
-    max-width:560px;
+    padding:0;
 
     background:white;
 
-    border-radius:24px;
-
-    padding:30px;
+    border-radius:28px;
 
     box-shadow:
-            0 25px 60px rgba(0,0,0,.08);
+        0 20px 45px rgba(15,23,42,.08);
 
 }
 
 .hero__image img{
 
     width:100%;
-
+    height:auto;
     display:block;
-
+    object-fit:contain;
 }
 
 @media(max-width:1024px){
 
 .hero__container{
 
-    grid-template-columns:1fr;
+    display:grid;
 
+    grid-template-columns:
+        1fr
+        1.2fr;
+
+    gap:40px;
 }
 
 .hero__content{

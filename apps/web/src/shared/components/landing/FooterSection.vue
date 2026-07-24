@@ -9,13 +9,54 @@
 
                     <RouterLink
                         to="/"
-                        class="logo"
+                        class="footer-logo"
                     >
-                        <div class="logo-icon">
-                            PF
-                        </div>
+                        <svg
+                            class="footer-logo__icon"
+                            viewBox="0 0 32 32"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <!-- Base -->
+                            <path
+                                d="M4 28H28"
+                                stroke="currentColor"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
 
-                        <span>Personal Finance</span>
+                            <!-- Barras -->
+                            <rect
+                                x="6"
+                                y="17"
+                                width="5"
+                                height="9"
+                                rx="1.5"
+                                fill="#60A5FA"
+                            />
+
+                            <rect
+                                x="13.5"
+                                y="10"
+                                width="5"
+                                height="16"
+                                rx="1.5"
+                                fill="#3B82F6"
+                            />
+
+                            <rect
+                                x="21"
+                                y="4"
+                                width="5"
+                                height="22"
+                                rx="1.5"
+                                fill="currentColor"
+                            />
+                        </svg>
+
+                        <span class="footer-logo__text">
+                            Personal Finance
+                        </span>
                     </RouterLink>
 
                     <p>
@@ -163,38 +204,54 @@ const year = new Date().getFullYear();
 
 }
 
-.logo{
+/* ---------------------------------------------------------------- */
+/* Logo */
+/* ---------------------------------------------------------------- */
+
+.footer-logo{
 
     display:flex;
 
     align-items:center;
 
-    gap:1rem;
+    gap:.85rem;
 
     text-decoration:none;
 
     color:white;
 
-    font-size:1.3rem;
+    font-size:1.35rem;
 
     font-weight:700;
 
 }
 
-.logo-icon{
+.footer-logo__icon{
 
-    width:44px;
-    height:44px;
+    width:36px;
+    height:36px;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display:block;
 
-    border-radius:12px;
-
-    background:var(--color-primary);
+    flex-shrink:0;
 
 }
+
+.footer-logo__text{
+
+    color:white;
+
+    font-size:1.45rem;
+
+    font-weight:700;
+
+    line-height:1;
+
+    white-space:nowrap;
+
+}
+
+/* ---------------------------------------------------------------- */
 
 .footer-column{
 
@@ -276,7 +333,7 @@ const year = new Date().getFullYear();
 
 .footer-grid{
 
-grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr 1fr;
 
 }
 
@@ -286,15 +343,15 @@ grid-template-columns:1fr 1fr;
 
 .footer-grid{
 
-grid-template-columns:1fr;
+    grid-template-columns:1fr;
 
 }
 
 .footer-bottom{
 
-flex-direction:column;
+    flex-direction:column;
 
-align-items:flex-start;
+    align-items:flex-start;
 
 }
 

@@ -13,8 +13,6 @@
 
         <ModulesSection />
 
-        <CTASection />
-
         <FooterSection />
 
 
@@ -28,7 +26,6 @@
   import DashboardPreview from "@/shared/components/landing/DashboardPreview.vue";
   import AiSection from "@/shared/components/landing/AiSection.vue";
   import ModulesSection from "@/shared/components/landing/ModulesSection.vue";
-  import CTASection from "@/shared/components/landing/CTASection.vue";
   import FooterSection from "@/shared/components/landing/FooterSection.vue";
 
   import "@/shared/styles/home.css";
