@@ -1,171 +1,348 @@
-# Financeiro Pessoal
+# Personal Finance
 
-Núcleo de domínio, em Python, para análise e planejamento financeiro pessoal. O projeto modela eventos financeiros ao longo de um período e transforma esses dados em projeções de caixa, diagnósticos de liquidez, indicadores de saúde financeira e recomendações de intervenção.
+> **Personal Finance** é uma plataforma de gestão financeira pessoal desenvolvida para ajudar pessoas e famílias a recuperar o controle do fluxo de caixa, organizar suas finanças e tomar decisões financeiras mais inteligentes com o apoio de Inteligência Artificial.
 
-> **Status: alpha.** A versão declarada no pacote é `0.1.0-alpha.9`. O foco atual é a regra de negócio; ainda não há interface gráfica, API HTTP ou persistência de dados pronta para uso final.
+Atualmente o projeto encontra-se na versão **1.0.0**, com autenticação completa, interface web, API REST e uma arquitetura preparada para evoluir para um assistente financeiro inteligente.
 
-## O que o projeto faz hoje
+---
 
-- Modela contas, categorias, transações, períodos de planejamento, objetivos e cenários.
-- Representa valores financeiros com `Money`, baseado em `Decimal` e arredondado a duas casas; o domínio não usa `float` para cálculos monetários.
-- Constrói uma linha do tempo diária de fluxo de caixa e projeta o saldo para o período.
-- Identifica saldo negativo, menor e maior saldo, dias negativos e eventos/lacunas de liquidez.
-- Calcula uma pontuação de saúde financeira de 0 a 100.
-- Simula despesas, receitas, decisões e intervenções; compara cenários e gera estratégias de recuperação/otimização.
-- Produz um relatório textual com resumo e destaques da recomendação.
+# O Problema
 
-O ponto de orquestração é `FinancialPlanner`. Ele executa o pipeline abaixo e retorna um `PlanningResult` consolidado:
+Grande parte das pessoas sabe quanto ganha, mas não consegue responder perguntas importantes sobre sua vida financeira, como:
+
+- Para onde meu dinheiro está indo?
+- Vou conseguir pagar todas as contas deste mês?
+- Quanto dinheiro terei disponível daqui a 30 dias?
+- Posso assumir um novo financiamento?
+- Qual o impacto de uma compra parcelada no meu fluxo de caixa?
+- Estou realmente melhorando minha saúde financeira?
+
+As ferramentas tradicionais normalmente registram apenas o passado. Poucas ajudam o usuário a compreender o presente e, principalmente, a prever o futuro.
+
+O **Personal Finance** nasceu para resolver esse problema.
+
+Seu principal objetivo é transformar informações financeiras em conhecimento para apoiar decisões antes que problemas aconteçam.
+
+---
+
+# Objetivos
+
+O sistema foi projetado para permitir que o usuário:
+
+- organizar toda sua vida financeira em um único lugar;
+- controlar contas bancárias, cartões, investimentos e financiamentos;
+- acompanhar receitas e despesas;
+- visualizar projeções futuras do fluxo de caixa;
+- monitorar indicadores de saúde financeira;
+- definir metas financeiras;
+- receber recomendações automáticas;
+- utilizar Inteligência Artificial para apoiar decisões financeiras.
+
+Mais do que registrar movimentações, o objetivo é oferecer uma visão completa da situação financeira atual e futura.
+
+---
+
+# Funcionalidades
+
+## Autenticação
+
+- Cadastro de usuários
+- Login utilizando JWT
+- Rotas protegidas
+- Usuário autenticado
+
+---
+
+## Gestão Financeira
+
+### Implementado
+
+- Cadastro de usuários
+- Login
+- Dashboard inicial
+
+### Em desenvolvimento
+
+- Contas
+- Categorias
+- Receitas
+- Despesas
+- Cartões de crédito
+- Financiamentos
+- Investimentos
+- Metas
+- Fluxo de Caixa
+- Relatórios
+
+---
+
+## Inteligência Artificial
+
+Planejado para as próximas versões:
+
+- Diagnóstico financeiro automático
+- Recomendações personalizadas
+- Classificação automática de despesas
+- Projeção inteligente do fluxo de caixa
+- Assistente financeiro conversacional
+- Sugestões de economia
+- Simulações financeiras
+
+---
+
+# Arquitetura
+
+O projeto segue os princípios de:
+
+- Domain Driven Design (DDD)
+- Clean Architecture
+- SOLID
+- Test Driven Development (TDD)
+
+As regras de negócio permanecem totalmente independentes de frameworks e tecnologias de infraestrutura.
+
+```
+Frontend (Vue)
+
+        │
+
+        ▼
+
+FastAPI
+
+        │
+
+        ▼
+
+Application
+
+        │
+
+        ▼
+
+Domain
+
+        │
+
+        ▼
+
+Infrastructure
+```
+
+---
+
+# Tecnologias
+
+## Backend
+
+- Python
+- FastAPI
+- JWT
+- Bcrypt
+- Pytest
+
+## Frontend
+
+- Vue 3
+- TypeScript
+- Vite
+- Vue Router
+- Pinia
+- Axios
+
+---
+
+# Estrutura do Projeto
 
 ```text
-Plano financeiro → projeção de caixa → análise de liquidez → score de saúde
-       └────────────────────→ diagnóstico/estratégias → recomendação e relatório
+financeiro-pessoal/
+
+├── apps/
+│   └── web/                  # Frontend Vue
+│
+├── src/
+│   ├── api/                  # Controllers, rotas e schemas
+│   ├── application/          # Casos de uso
+│   ├── domain/               # Entidades e regras de negócio
+│   ├── infrastructure/       # Implementações externas
+│   └── config/               # Configurações
+│
+├── tests/                    # Testes automatizados
+│
+├── docs/                     # Documentação
+│
+└── README.md
 ```
 
-## Arquitetura
+---
 
-O código segue princípios de DDD e Clean Architecture. As regras estão concentradas em `src/domain`, sem dependência de infraestrutura ou interface.
+# Estado Atual
 
-```text
-src/
-├── domain/
-│   ├── entities/       # entidades e resultados do domínio
-│   ├── enums/          # tipos e estados do domínio
-│   ├── value_objects/  # Money, Percentage e DailyCashFlow
-│   └── services/       # projeções, análises, simulações e recomendações
-├── config/             # metadados e configurações básicas
-└── main.py             # ponto de entrada informativo atual
+**Versão:** `1.0.0`
 
-tests/
-├── domain/             # testes unitários das entidades, VOs e serviços
-└── integration/        # validação do pipeline FinancialPlanner
+## Implementado
+
+- Backend FastAPI
+- Frontend Vue
+- Arquitetura DDD
+- Clean Architecture
+- Autenticação completa
+- Cadastro de usuários
+- Login
+- JWT
+- Rotas protegidas
+- Dashboard inicial
+- Testes automatizados
+
+---
+
+# Roadmap
+
+## Versão 1.1
+
+- Contas
+- Categorias
+
+## Versão 1.2
+
+- Receitas
+- Despesas
+
+## Versão 1.3
+
+- Cartões
+- Fluxo de Caixa
+
+## Versão 1.4
+
+- Dashboards
+- Indicadores financeiros
+
+## Versão 2.0
+
+- Inteligência Artificial
+- Recomendações automáticas
+- Planejamento financeiro inteligente
+- Assistente Financeiro
+
+---
+
+# Como executar o projeto
+
+## Backend
+
+### Criar ambiente virtual
+
+```bash
+python -m venv .venv
 ```
 
-### Aplicações web (monorepo)
+### Ativar ambiente
 
-O repositório agora também contém as aplicações de entrega em `apps/`:
+Windows
 
-- `apps/api`: API FastAPI inicial com `GET /health` e `POST /api/v1/plans/analyze`.
-- `apps/web`: interface inicial em Vue 3, Vite e TypeScript. Em desenvolvimento, o Vite redireciona chamadas `/api` para `http://localhost:8000`.
-
-`src/` e `tests/` permanecem na raiz nesta primeira etapa para preservar os imports e a configuração de testes existentes. Veja [apps/README.md](apps/README.md) para os comandos de execução e a estratégia de migração segura.
-
-Decisões importantes do projeto:
-
-- O domínio não conhece infraestrutura.
-- Objetos de valor são imutáveis.
-- Dinheiro é sempre `Money`/`Decimal`.
-- Persistência em Excel é planejada como adaptador, nunca como local para regras de negócio.
-- O núcleo foi pensado para futuras interfaces como CLI, web, desktop e notebooks.
-
-Os detalhes estão em [decisões de arquitetura](docs/architecture/architecture_decisions.md), [glossário](docs/architecture/glossary.md) e [roadmap](docs/architecture/project_roadmap.md).
-
-## Requisitos e instalação
-
-- Python 3.12 ou superior
-- `pip`
-
-Crie e ative um ambiente virtual:
-
-```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+```bash
+.\.venv\Scripts\activate
 ```
 
-Instale as ferramentas de desenvolvimento:
+Linux/Mac
 
-```powershell
+```bash
+source .venv/bin/activate
+```
+
+### Instalar dependências
+
+```bash
 pip install -e ".[dev]"
 ```
 
-Para a dependência adicional de planilhas já listada no repositório, use:
+### Executar API
 
-```powershell
-pip install -r requirements.txt
+```bash
+python -m uvicorn src.api.main:app --reload
 ```
 
-## Uso básico
+Documentação disponível em:
 
-O exemplo abaixo cria um período, registra uma despesa na linha do tempo e executa o planejador.
-
-```python
-from datetime import date
-
-from src.domain.entities import (
-    Account,
-    CashFlowTimeline,
-    Category,
-    FinancialPlan,
-    PlanningPeriod,
-    Transaction,
-)
-from src.domain.enums import AccountType, CategoryType
-from src.domain.services import FinancialPlanner
-from src.domain.value_objects import Money
-
-period = PlanningPeriod(date(2026, 8, 1), date(2026, 8, 31))
-timeline = CashFlowTimeline(period.start_date, period.end_date)
-
-account = Account("Conta corrente", AccountType.CHECKING)
-market = Category("Mercado", CategoryType.EXPENSE)
-
-timeline.add_transaction(
-    Transaction(
-        account=account,
-        category=market,
-        amount=Money(250),
-        transaction_date=date(2026, 8, 5),
-        description="Compras do mês",
-    )
-)
-
-plan = FinancialPlan(
-    period=period,
-    opening_balance=Money(1_000),
-    timeline=timeline,
-)
-
-result = FinancialPlanner().analyze(plan)
-
-print(result.score.overall)
-print(result.liquidity.minimum_balance)
-print(result.report.summary)
+```
+http://localhost:8000/docs
 ```
 
-`PlanningResult` disponibiliza a projeção (`projection`), a análise de liquidez (`liquidity`), o score (`score`), o resultado do aconselhamento (`advisor`), eventuais dados de otimização/comparação e o relatório final (`report`).
+---
 
-Há também um arquivo inicial em [examples/financial_planner_example.py](examples/financial_planner_example.py). Ele ilustra a API pública, mas ainda contém um placeholder para a construção do plano; o exemplo acima pode ser usado como referência funcional completa.
+## Frontend
 
-## Testes e qualidade
-
-Execute toda a suíte com cobertura:
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q
+```bash
+cd apps/web
 ```
 
-No estado atual do repositório, a suíte contém **133 testes** e finaliza com sucesso. A configuração de desenvolvimento também prevê Black, isort, Ruff e mypy:
+Instalar dependências
 
-```powershell
-black src tests
-isort src tests
-ruff check src tests
-mypy src
+```bash
+npm install
 ```
 
-As convenções de código estão em [coding_guidelines.md](docs/architecture/coding_guidelines.md).
+Executar
 
-## Escopo atual e próximos passos
+```bash
+npm run dev
+```
 
-O projeto já possui uma base ampla de domínio e serviços, mas alguns itens permanecem planejados ou incompletos:
+Aplicação disponível em:
 
-- persistência/importação/exportação em Excel;
-- dashboard, gráficos e uma interface de uso;
-- integrações de IA e classificação automática;
-- uma API ou CLI de produto, além do núcleo de domínio;
-- exemplos de ponta a ponta mais completos.
+```
+http://localhost:5173
+```
 
-Consulte o [roadmap](docs/architecture/project_roadmap.md) para a visão de evolução e o [changelog](CHANGELOG.md) para o histórico disponível.
+---
 
-## Autor
+# Testes
 
-Daniel Cunha da Silva
+Executar toda a suíte:
+
+```bash
+pytest
+```
+
+Ou:
+
+```bash
+python -m pytest
+```
+
+---
+
+# Princípios Arquiteturais
+
+O projeto foi desenvolvido seguindo os seguintes princípios:
+
+- Clean Code
+- SOLID
+- Domain Driven Design
+- Clean Architecture
+- Test Driven Development
+- Separation of Concerns
+- Dependency Injection
+- Repository Pattern
+- Value Objects
+- Entities
+- Use Cases
+
+---
+
+# Visão de Longo Prazo
+
+O objetivo do **Personal Finance** é evoluir para um verdadeiro **Assistente Financeiro Inteligente**.
+
+Em vez de apenas registrar receitas e despesas, o sistema será capaz de compreender o comportamento financeiro do usuário, antecipar problemas de fluxo de caixa, sugerir estratégias para redução de gastos e auxiliar no planejamento financeiro de curto, médio e longo prazo.
+
+O foco principal do projeto é responder continuamente à pergunta:
+
+> **"O que devo fazer hoje para ter uma vida financeira melhor amanhã?"**
+
+---
+
+# Autor
+
+**Daniel Cunha da Silva**
