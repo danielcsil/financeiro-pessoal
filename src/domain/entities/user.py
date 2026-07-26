@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, UTC
 from enum import Enum
 from uuid import UUID, uuid4
+
 from src.domain.value_objects.email import Email
 from src.domain.value_objects.hashed_password import HashedPassword
 
@@ -45,6 +46,23 @@ class User:
     )
 
     last_login_at: datetime | None = None
+
+    @classmethod
+    def create(
+        cls,
+        name: str,
+        email: str | Email,
+        password: str | HashedPassword,
+    ) -> "User":
+        return cls(
+            name=name,
+            email=email if isinstance(email, Email) else Email(email),
+            password=(
+                password
+                if isinstance(password, HashedPassword)
+                else HashedPassword(password)
+            ),
+        )
 
     def activate(self) -> None:
         """

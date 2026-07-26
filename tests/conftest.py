@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+from src.api.dependencies.repositories import get_user_repository
 from src.domain.entities import (
     CashFlowTimeline,
     FinancialPlan,
@@ -25,3 +26,8 @@ def financial_plan():
             period.end_date,
         ),
     )
+
+
+@pytest.fixture(autouse=True)
+def reset_api_state():
+    get_user_repository.cache_clear()

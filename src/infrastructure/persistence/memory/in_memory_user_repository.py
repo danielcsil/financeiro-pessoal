@@ -34,7 +34,7 @@ class InMemoryUserRepository(UserRepository):
 
     def find_by_email(self, email: Email) -> User | None:
         for user in self._users.values():
-            if user.email == email:
+            if str(user.email) == str(email):
                 return user
 
         return None
