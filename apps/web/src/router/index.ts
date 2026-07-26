@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import RegisterView from "@/views/auth/RegisterView.vue";
+import LoginView from "@/views/auth/LoginView.vue";
 
 import {
   PublicLayout,
@@ -24,14 +26,14 @@ const routes: RouteRecordRaw[] = [
     component: AuthLayout,
     children: [
       {
-        path: "login",
+        path: "/login",
         name: "login",
-        component: () => import("@/views/auth/LoginView.vue"),
+        component: LoginView,
       },
       {
-        path: "register",
+        path: "/register",
         name: "register",
-        component: () => import("@/views/auth/RegisterView.vue"),
+        component: RegisterView,
       },
       {
         path: "forgot-password",

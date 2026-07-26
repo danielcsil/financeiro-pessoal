@@ -1,159 +1,121 @@
+<template>
+  <section class="auth-page">
+    <div class="auth-card">
+      <h1>Entrar</h1>
+
+      <p class="subtitle">
+        Informe seu e-mail e senha para acessar sua conta.
+      </p>
+
+      <form @submit.prevent="onSubmit">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            v-model="form.email"
+            type="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            v-model="form.password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary"
+        >
+          Entrar
+        </button>
+      </form>
+    </div>
+  </section>
+</template>
+
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
 
-import {
-  BaseButton,
-  BaseCard,
-  BaseInput,
-} from "@/shared/components/base";
+import { login } from "@/modules/auth/services/auth.service";
 
-const email = ref("");
-const password = ref("");
+const router = useRouter();
 
-function login() {
-  console.log({
-    email: email.value,
-    password: password.value,
-  });
+const form = reactive({
+  email: "",
+  password: "",
+});
+
+async function onSubmit(): Promise<void> {
+  try {
+    const response = await login(form);
+
+    localStorage.setItem(
+      "access_token",
+      response.access_token,
+    );
+
+    router.push("/dashboard");
+  } catch (error) {
+    console.error(error);
+    alert("E-mail ou senha inválidos.");
+  }
 }
 </script>
 
-<template>
-  <BaseCard>
-
-    <template #header>
-      <div class="login__header">
-        <h2>Entrar</h2>
-
-        <p>
-          Acesse sua conta para gerenciar suas finanças.
-        </p>
-      </div>
-    </template>
-
-    <form
-      class="login__form"
-      @submit.prevent="login"
-    >
-
-      <BaseInput
-        v-model="email"
-        label="E-mail"
-        type="email"
-        placeholder="seu@email.com"
-        required
-      />
-
-      <BaseInput
-        v-model="password"
-        label="Senha"
-        type="password"
-        placeholder="********"
-        required
-      />
-
-      <div class="login__actions">
-
-        <RouterLink to="/forgot-password">
-          Esqueceu sua senha?
-        </RouterLink>
-
-      </div>
-
-      <BaseButton
-        block
-        type="submit"
-      >
-        Entrar
-      </BaseButton>
-
-    </form>
-
-    <template #footer>
-
-      <div class="login__footer">
-
-        Não possui uma conta?
-
-        <RouterLink to="/register">
-          Criar conta
-        </RouterLink>
-
-      </div>
-
-    </template>
-
-  </BaseCard>
-</template>
-
 <style scoped>
-
-.login__header{
-
-text-align:center;
-
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
 }
 
-.login__header h2{
-
-margin-bottom:.5rem;
-
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.login__header p{
-
-color:var(--color-text-secondary);
-
+.subtitle {
+  margin: 0.5rem 0 2rem;
+  color: #666;
 }
 
-.login__form{
-
-display:flex;
-
-flex-direction:column;
-
-gap:1.5rem;
-
-margin-top:1.5rem;
-
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
 }
 
-.login__actions{
-
-display:flex;
-
-justify-content:flex-end;
-
-font-size:.9rem;
-
+.form-group label {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 
-.login__actions a{
-
-text-decoration:none;
-
-color:var(--color-primary);
-
+.form-group input {
+  padding: 0.75rem;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
 }
 
-.login__footer{
-
-text-align:center;
-
-padding-top:1rem;
-
+.btn-primary {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
-
-.login__footer a{
-
-margin-left:.25rem;
-
-text-decoration:none;
-
-font-weight:600;
-
-color:var(--color-primary);
-
-}
-
 </style>

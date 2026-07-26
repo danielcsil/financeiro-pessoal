@@ -125,7 +125,7 @@ const isAuthenticated = computed(() => false);
         <RouterLink
           v-if="!isAuthenticated"
           to="/login"
-          class="btn btn-secondary"
+          class="btn btn-outline"
         >
           Entrar
         </RouterLink>
