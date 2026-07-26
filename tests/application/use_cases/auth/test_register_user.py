@@ -1,4 +1,12 @@
 from __future__ import annotations
+from src.domain.exceptions import (
+    InvalidEmailError,
+    PasswordMismatchError,
+    RequiredFieldError,
+    TermsNotAcceptedError,
+    EmailAlreadyExistsError,
+    InvalidPasswordError
+)
 
 import pytest
 
@@ -68,7 +76,7 @@ def test_should_not_register_user_with_existing_email() -> None:
 
     use_case.execute(request)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(EmailAlreadyExistsError):
         use_case.execute(request)
 
 
@@ -111,7 +119,7 @@ def test_should_not_register_without_name() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(RequiredFieldError):
         use_case.execute(
             create_request(
                 name="",
@@ -126,7 +134,7 @@ def test_should_not_register_without_email() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidEmailError):
         use_case.execute(
             create_request(
                 email="",
@@ -141,7 +149,7 @@ def test_should_not_register_without_password() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidPasswordError):
         use_case.execute(
             create_request(
                 password="",
@@ -156,7 +164,7 @@ def test_should_not_register_when_passwords_do_not_match() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(PasswordMismatchError):
         use_case.execute(
             create_request(
                 confirm_password="OutraSenha123",
@@ -171,7 +179,7 @@ def test_should_not_register_without_accepting_terms() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TermsNotAcceptedError):
         use_case.execute(
             create_request(
                 accepted_terms=False,

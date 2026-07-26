@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, UTC
 from enum import Enum
 from uuid import UUID, uuid4
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.hashed_password import HashedPassword
 
 
 class UserStatus(Enum):
@@ -26,8 +28,8 @@ class User:
     """
 
     name: str
-    email: str
-    password_hash: str
+    email: Email
+    password: HashedPassword
 
     id: UUID = field(default_factory=uuid4)
     status: UserStatus = UserStatus.ACTIVE

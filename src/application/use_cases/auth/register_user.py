@@ -9,7 +9,17 @@ from src.application.dto.auth.register_user_response import (
 from src.domain.entities.user import User
 from src.domain.repositories.user_repository import UserRepository
 from src.domain.services.password_hasher import PasswordHasher
+from src.domain.value_objects.email import Email
 
+from src.domain.exceptions import (
+    PasswordMismatchError,
+    RequiredFieldError,
+    TermsNotAcceptedError,
+    EmailAlreadyExistsError
+)
+
+from src.domain.value_objects.password import Password
+from src.domain.value_objects.hashed_password import HashedPassword
 
 class RegisterUserUseCase:
     """
@@ -33,34 +43,32 @@ class RegisterUserUseCase:
         """
 
         name = request.name.strip()
-        email = request.email.strip().lower()
+        email = Email(request.email)
+        password = Password(request.password)
 
         if not name:
-            raise ValueError("Name is required.")
+            raise RequiredFieldError("Name is required.")
 
         if not email:
-            raise ValueError("Email is required.")
-
-        if not request.password:
-            raise ValueError("Password is required.")
+            raise RequiredFieldError("Email is required.")
 
         if request.password != request.confirm_password:
-            raise ValueError("Passwords do not match.")
+            raise PasswordMismatchError("Passwords do not match.")
 
         if not request.accepted_terms:
-            raise ValueError("Terms must be accepted.")
+            raise TermsNotAcceptedError("Terms must be accepted.")
 
         if self._user_repository.exists_by_email(email):
-            raise ValueError("Email already registered.")
+            raise EmailAlreadyExistsError("Email already registered.")
 
-        password_hash = self._password_hasher.hash(
-            request.password
+        password_hash = HashedPassword(
+            self._password_hasher.hash(password.value)
         )
 
         user = User(
             name=name,
             email=email,
-            password_hash=password_hash,
+            password=password_hash,
         )
 
         self._user_repository.save(user)
@@ -68,7 +76,7 @@ class RegisterUserUseCase:
         return RegisterUserResponse(
             id=user.id,
             name=user.name,
-            email=user.email,
+            email=user.email.value,
             email_verified=user.email_verified,
             created_at=user.created_at,
         )

@@ -4,6 +4,7 @@ from uuid import UUID
 
 from src.domain.entities.user import User
 from src.domain.repositories.user_repository import UserRepository
+from src.domain.value_objects.email import Email
 
 
 class InMemoryUserRepository(UserRepository):
@@ -31,14 +32,12 @@ class InMemoryUserRepository(UserRepository):
     def find_by_id(self, user_id: UUID) -> User | None:
         return self._users.get(user_id)
 
-    def find_by_email(self, email: str) -> User | None:
-        normalized_email = email.strip().lower()
-
+    def find_by_email(self, email: Email) -> User | None:
         for user in self._users.values():
-            if user.email == normalized_email:
+            if user.email == email:
                 return user
 
         return None
 
-    def exists_by_email(self, email: str) -> bool:
+    def exists_by_email(self, email: Email) -> bool:
         return self.find_by_email(email) is not None

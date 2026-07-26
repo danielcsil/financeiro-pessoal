@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from src.domain.entities.user import User, UserStatus
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.password import Password
+
 
 
 def test_should_create_user() -> None:
@@ -9,14 +12,14 @@ def test_should_create_user() -> None:
     """
 
     user = User(
-        name="Daniel Cunha",
-        email="daniel@email.com",
-        password_hash="hash",
+        name="Daniel",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
-    assert user.name == "Daniel Cunha"
-    assert user.email == "daniel@email.com"
-    assert user.password_hash == "hash"
+    assert user.name == "Daniel"
+    assert user.email == Email("daniel@email.com")
+    assert user.password.value == "Senha123"
 
     assert user.status == UserStatus.ACTIVE
     assert user.email_verified is False
@@ -34,8 +37,8 @@ def test_should_verify_email() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     user.verify_email()
@@ -50,8 +53,8 @@ def test_should_register_login() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     assert user.last_login_at is None
@@ -68,8 +71,8 @@ def test_should_lock_user() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     user.lock()
@@ -84,8 +87,8 @@ def test_should_disable_user() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     user.disable()
@@ -100,8 +103,8 @@ def test_should_activate_user() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     user.lock()
@@ -118,8 +121,8 @@ def test_should_not_be_active_when_email_is_not_verified() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     assert user.is_active is False
@@ -132,8 +135,8 @@ def test_should_be_active_when_email_is_verified() -> None:
 
     user = User(
         name="Daniel",
-        email="daniel@email.com",
-        password_hash="hash",
+        email=Email("daniel@email.com"),
+        password=Password("Senha123"),
     )
 
     user.verify_email()

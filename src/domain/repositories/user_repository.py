@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 
 from src.domain.entities.user import User
+from src.domain.value_objects.email import Email
+
 
 
 class UserRepository(ABC):
@@ -43,14 +45,14 @@ class UserRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_by_email(self, email: str) -> User | None:
+    def find_by_email(self, email: Email) -> User | None:
         """
         Returns a user by e-mail.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def exists_by_email(self, email: str) -> bool:
+    def exists_by_email(self, email: Email) -> bool:
         """
         Checks whether a user with the given e-mail already exists.
         """
