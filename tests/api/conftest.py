@@ -16,7 +16,7 @@ def register_user(
     password: str = "12345678",
 ):
     return client.post(
-        "/auth/register",
+        "/api/auth/register",
         json={
             "name": name,
             "email": email,

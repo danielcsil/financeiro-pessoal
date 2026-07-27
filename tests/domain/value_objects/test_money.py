@@ -12,6 +12,11 @@ def test_should_create_money():
     assert money.to_decimal() == Decimal("10.00")
 
 
+def test_should_create_money_from_float_and_decimal():
+    assert Money.from_float(10.125).to_decimal() == Decimal("10.13")
+    assert Money.from_decimal(Decimal("12.5")).to_decimal() == Decimal("12.50")
+
+
 def test_should_round_to_two_decimal_places():
     money = Money("10.129")
 
@@ -56,6 +61,12 @@ def test_should_divide_money():
     assert result.to_decimal() == Decimal("2.50")
 
 
+def test_should_support_modulo_and_boolean_state():
+    assert Money(10) % 3 == Money(1)
+    assert bool(Money.zero()) is False
+    assert bool(Money(1)) is True
+
+
 def test_should_negate_money():
     money = -Money(10)
 
@@ -66,6 +77,13 @@ def test_should_return_absolute_money():
     money = abs(Money(-10))
 
     assert money.to_decimal() == Decimal("10.00")
+
+
+def test_should_format_string_and_repr():
+    money = Money(1234.5)
+
+    assert str(money) == "R$ 1,234.50"
+    assert repr(money) == "Money(1234.50)"
 
 
 def test_should_identify_zero():
@@ -86,6 +104,19 @@ def test_should_compare_equal_money():
 
 def test_should_compare_different_money():
     assert Money(10) != Money(11)
+
+
+def test_should_order_money_values():
+    assert Money(10) < Money(11)
+    assert Money(11) > Money(10)
+
+
+def test_should_return_notimplemented_for_invalid_operands():
+    money = Money(10)
+
+    assert money.__add__(10) is NotImplemented
+    assert money.__sub__(10) is NotImplemented
+    assert money.__lt__(10) is NotImplemented
 
 
 def test_should_copy_money():

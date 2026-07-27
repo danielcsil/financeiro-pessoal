@@ -7,7 +7,7 @@ client = TestClient(app)
 
 def test_should_return_validation_error_when_email_is_missing():
     response = client.post(
-        "/auth/register",
+        "/api/auth/register",
         json={
             "name": "Daniel",
             "password": "12345678",
@@ -26,7 +26,7 @@ def test_should_return_validation_error_when_email_is_missing():
 
 def test_should_return_validation_error_for_invalid_json():
     response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         data="{",
         headers={
             "Content-Type": "application/json",

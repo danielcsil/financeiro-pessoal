@@ -4,7 +4,7 @@ def test_should_login_user(
     client: TestClient,
 ) -> None:
     client.post(
-        "/auth/register",
+        "/api/auth/register",
         json={
             "name": "Daniel",
             "email": "daniel@email.com",
@@ -15,7 +15,7 @@ def test_should_login_user(
     )
 
     response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={
             "email": "daniel@email.com",
             "password": "12345678",
@@ -34,7 +34,7 @@ def test_should_return_401_when_user_does_not_exist(
     client: TestClient,
 ) -> None:
     response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={
             "email": "naoexiste@email.com",
             "password": "12345678",
@@ -50,7 +50,7 @@ def test_should_return_401_when_password_is_invalid(
 ) -> None:
 
     client.post(
-        "/auth/register",
+        "/api/auth/register",
         json={
             "name": "Daniel",
             "email": "daniel@email.com",
@@ -61,7 +61,7 @@ def test_should_return_401_when_password_is_invalid(
     )
 
     response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={
             "email": "daniel@email.com",
             "password": "senha_errada",
@@ -76,7 +76,7 @@ def test_me_with_valid_token_returns_current_user(
     client: TestClient,
 ) -> None:
     client.post(
-        "/auth/register",
+        "/api/auth/register",
         json={
             "name": "Daniel",
             "email": "daniel@email.com",
@@ -87,7 +87,7 @@ def test_me_with_valid_token_returns_current_user(
     )
 
     login_response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={
             "email": "daniel@email.com",
             "password": "12345678",
@@ -97,7 +97,7 @@ def test_me_with_valid_token_returns_current_user(
     access_token = login_response.json()["access_token"]
 
     response = client.get(
-        "/auth/me",
+        "/api/auth/me",
         headers={
             "Authorization": f"Bearer {access_token}",
         },

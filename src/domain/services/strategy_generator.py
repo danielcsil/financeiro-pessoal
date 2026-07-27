@@ -39,7 +39,7 @@ class StrategyGenerator:
                     for candidate in day:
                         if (
                             candidate.type == TransactionType.EXPENSE
-                            and candidate.nature == ExpenseNature.NON_ESSENTIAL
+                            and candidate.nature == ExpenseNature.DISCRETIONARY
                         ):
                             transaction = candidate
                             break

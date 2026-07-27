@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 def test_me_without_token_returns_401(
     client: TestClient,
 ) -> None:
-    response = client.get("/auth/me")
+    response = client.get("/api/auth/me")
 
     assert response.status_code == 401
 
@@ -12,7 +12,7 @@ def test_me_with_invalid_token_returns_401(
     client: TestClient,
 ) -> None:
     response = client.get(
-        "/auth/me",
+        "/api/auth/me",
         headers={
             "Authorization": "Bearer invalid-token",
         },

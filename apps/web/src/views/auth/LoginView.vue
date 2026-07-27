@@ -10,6 +10,7 @@
       <form @submit.prevent="onSubmit">
         <div class="form-group">
           <label for="email">E-mail</label>
+
           <input
             id="email"
             v-model="form.email"
@@ -21,6 +22,7 @@
 
         <div class="form-group">
           <label for="password">Senha</label>
+
           <input
             id="password"
             v-model="form.password"
@@ -33,8 +35,9 @@
         <button
           type="submit"
           class="btn-primary"
+          :disabled="loading"
         >
-          Entrar
+          {{ loading ? "Entrando..." : "Entrar" }}
         </button>
       </form>
     </div>
@@ -42,31 +45,77 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
-import { useRouter } from "vue-router";
+import { reactive, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import { login } from "@/modules/auth/services/auth.service";
+import { useAuthStore } from "@/modules/auth/stores/auth.store";
 
+/**
+ * Router utilizado para navegação após autenticação.
+ */
 const router = useRouter();
 
+/**
+ * Permite recuperar a rota originalmente solicitada
+ * antes do redirecionamento para a tela de login.
+ */
+const route = useRoute();
+
+/**
+ * Store responsável por toda a autenticação da aplicação.
+ *
+ * A View nunca acessa diretamente:
+ * - API
+ * - localStorage
+ * - JWT
+ */
+const auth = useAuthStore();
+
+/**
+ * Dados informados pelo usuário.
+ */
 const form = reactive({
   email: "",
   password: "",
 });
 
+/**
+ * Controla o estado de submissão do formulário.
+ *
+ * Evita múltiplos cliques enquanto a autenticação
+ * está em andamento.
+ */
+const loading = ref(false);
+
+/**
+ * Realiza o processo de autenticação.
+ *
+ * Fluxo:
+ *
+ * 1. Delega o login para a AuthStore.
+ * 2. A AuthStore autentica na API.
+ * 3. Persiste o JWT.
+ * 4. Carrega o usuário autenticado.
+ * 5. Redireciona para a rota originalmente solicitada
+ *    ou para o Dashboard.
+ */
 async function onSubmit(): Promise<void> {
+  loading.value = true;
+
   try {
-    const response = await login(form);
+    await auth.login(form.email, form.password);
 
-    localStorage.setItem(
-      "access_token",
-      response.access_token,
-    );
+    const redirect =
+      typeof route.query.redirect === "string"
+        ? route.query.redirect
+        : "/dashboard";
 
-    router.push("/dashboard");
+    await router.push(redirect);
   } catch (error) {
     console.error(error);
     alert("E-mail ou senha inválidos.");
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -117,5 +166,10 @@ async function onSubmit(): Promise<void> {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>

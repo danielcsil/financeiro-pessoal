@@ -1,46 +1,3 @@
-<script setup lang="ts">
-import { computed, ref } from "vue";
-import { RouterLink, useRoute } from "vue-router";
-
-interface MenuItem {
-  label: string;
-  to: string;
-}
-
-const route = useRoute();
-
-const mobileMenuOpen = ref(false);
-
-const menuItems: MenuItem[] = [
-  {
-    label: "Início",
-    to: "/",
-  },
-  {
-    label: "Funcionalidades",
-    to: "/features",
-  },
-  {
-    label: "Preços",
-    to: "/pricing",
-  },
-  {
-    label: "Contato",
-    to: "/contact",
-  },
-];
-
-function toggleMenu() {
-  mobileMenuOpen.value = !mobileMenuOpen.value;
-}
-
-function closeMenu() {
-  mobileMenuOpen.value = false;
-}
-
-const isAuthenticated = computed(() => false);
-</script>
-
 <template>
   <header class="navbar">
     <div class="navbar__container">
@@ -122,33 +79,137 @@ const isAuthenticated = computed(() => false);
       </nav>
 
       <div class="navbar__actions">
-        <RouterLink
-          v-if="!isAuthenticated"
-          to="/login"
-          class="btn btn-outline"
-        >
-          Entrar
-        </RouterLink>
+        <template v-if="!isAuthenticated">
+          <RouterLink
+            to="/login"
+            class="btn btn-outline"
+          >
+            Entrar
+          </RouterLink>
 
-        <RouterLink
-          v-if="!isAuthenticated"
-          to="/register"
-          class="btn btn-primary"
-        >
-          Criar Conta
-        </RouterLink>
+          <RouterLink
+            to="/register"
+            class="btn btn-primary"
+          >
+            Criar Conta
+          </RouterLink>
+        </template>
 
-        <RouterLink
+        <div
           v-else
-          to="/dashboard"
-          class="btn btn-primary"
+          class="navbar__authenticated"
         >
-          Dashboard
-        </RouterLink>
+          <RouterLink
+            to="/dashboard"
+            class="btn btn-primary"
+            @click="closeMenu"
+          >
+            Dashboard
+          </RouterLink>
+
+          <button
+            type="button"
+            class="btn btn-outline"
+            @click="logout"
+          >
+            Sair
+          </button>
+        </div>
       </div>
     </div>
   </header>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+
+import { useAuthStore } from "@/modules/auth/stores/auth.store";
+
+/**
+ * Estrutura dos itens do menu principal.
+ */
+interface MenuItem {
+  label: string;
+  to: string;
+}
+
+const route = useRoute();
+const router = useRouter();
+
+/**
+ * Store central de autenticação.
+ *
+ * A Navbar apenas consulta o estado e executa
+ * ações disponibilizadas pela AuthStore.
+ */
+const auth = useAuthStore();
+
+/**
+ * Controla a abertura do menu mobile.
+ */
+const mobileMenuOpen = ref(false);
+
+/**
+ * Itens do menu público.
+ */
+const menuItems: MenuItem[] = [
+  {
+    label: "Início",
+    to: "/",
+  },
+  {
+    label: "Funcionalidades",
+    to: "/features",
+  },
+  {
+    label: "Preços",
+    to: "/pricing",
+  },
+  {
+    label: "Contato",
+    to: "/contact",
+  },
+];
+
+/**
+ * Alterna o estado do menu mobile.
+ */
+function toggleMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+}
+
+/**
+ * Fecha o menu mobile.
+ */
+function closeMenu() {
+  mobileMenuOpen.value = false;
+}
+
+/**
+ * Indica se existe um usuário autenticado.
+ *
+ * A Navbar nunca consulta localStorage.
+ * Todo o estado vem da AuthStore.
+ */
+const isAuthenticated = computed(() => auth.isAuthenticated);
+
+/**
+ * Encerra a sessão do usuário.
+ *
+ * Fluxo:
+ * 1. Fecha o menu.
+ * 2. Remove a sessão através da AuthStore.
+ * 3. Redireciona para Login.
+ */
+async function logout() {
+  closeMenu();
+
+  auth.logout();
+
+  await router.replace("/login");
+}
+</script>
 
 <style scoped>
 .navbar {
@@ -227,6 +288,12 @@ const isAuthenticated = computed(() => false);
   gap: .75rem;
 }
 
+.navbar__authenticated {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+}
+
 .navbar__toggle {
   display: none;
 
@@ -249,7 +316,7 @@ const isAuthenticated = computed(() => false);
 
     padding: 1rem 2rem;
     gap: 2rem;
-}
+  }
 
   .navbar__toggle {
     display: block;
@@ -260,7 +327,7 @@ const isAuthenticated = computed(() => false);
     gap: 1.5rem;
     flex: 1;
     justify-content: center;
-}
+  }
 
   .navbar__menu--open {
     display: flex;
@@ -272,6 +339,11 @@ const isAuthenticated = computed(() => false);
 
     margin-left: auto;
     flex-shrink: 0;
-}
+  }
+
+  .navbar__authenticated {
+    display: flex;
+    gap: .75rem;
+  }
 }
 </style>

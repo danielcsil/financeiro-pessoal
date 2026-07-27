@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from domain.exceptions.invalid_password_hash_error import InvalidPasswordHashError
+from src.domain.exceptions.invalid_password_hash_error import (
+    InvalidPasswordHashError,
+)
 
 
 @dataclass(frozen=True)

@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+
 import RegisterView from "@/views/auth/RegisterView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
 
@@ -8,6 +9,16 @@ import {
   DashboardLayout,
 } from "@/shared/layouts";
 
+import { authGuard } from "./guards/auth.guard";
+
+/**
+ * Definição das rotas da aplicação.
+ *
+ * A aplicação utiliza Layouts para separar as áreas:
+ * - PublicLayout: páginas públicas
+ * - AuthLayout: autenticação
+ * - DashboardLayout: área autenticada
+ */
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
@@ -45,7 +56,16 @@ const routes: RouteRecordRaw[] = [
 
   {
     path: "/dashboard",
+
+    /**
+     * Todas as rotas filhas deste layout exigem autenticação.
+     */
+    meta: {
+      requiresAuth: true,
+    },
+
     component: DashboardLayout,
+
     children: [
       {
         path: "",
@@ -55,15 +75,29 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
+  /**
+   * Redireciona qualquer rota inexistente para a Home.
+   */
   {
     path: "/:pathMatch(.*)*",
     redirect: "/",
   },
 ];
 
+/**
+ * Instância principal do Vue Router.
+ */
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+/**
+ * Guard global responsável por:
+ * - restaurar a sessão;
+ * - proteger rotas privadas;
+ * - redirecionar usuários não autenticados.
+ */
+router.beforeEach(authGuard);
 
 export default router;

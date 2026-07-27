@@ -1,21 +1,25 @@
 from __future__ import annotations
 
-from domain.entities.user import User
-from domain.exceptions.invalid_credentials_error import InvalidCredentialsError
-from domain.value_objects.email import Email
-from domain.value_objects.hashed_password import HashedPassword
-from infrastructure.security.bcrypt_password_hasher import BcryptPasswordHasher
-from src.infrastructure.security.fake_token_provider import FakeTokenProvider
 import pytest
 
 from src.application.dto.auth.login_request import LoginRequest
 from src.application.use_cases.auth.login_user import LoginUserUseCase
+from src.domain.entities.user import User
+from src.domain.exceptions.invalid_credentials_error import (
+    InvalidCredentialsError,
+)
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.hashed_password import HashedPassword
 from src.infrastructure.persistence.memory.in_memory_user_repository import (
     InMemoryUserRepository,
+)
+from src.infrastructure.security.bcrypt_password_hasher import (
+    BcryptPasswordHasher,
 )
 from src.infrastructure.security.bcrypt_password_verifier import (
     BcryptPasswordVerifier,
 )
+from src.infrastructure.security.fake_token_provider import FakeTokenProvider
 
 
 def create_use_case() -> LoginUserUseCase:

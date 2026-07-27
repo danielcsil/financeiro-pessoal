@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from uuid import UUID
-
 from src.domain.services.token_provider import TokenProvider
-from domain.value_objects.token_claims import TokenClaims
+from src.domain.value_objects.token_claims import TokenClaims
 
 
 class FakeTokenProvider(TokenProvider):
@@ -12,7 +10,7 @@ class FakeTokenProvider(TokenProvider):
     """
 
     def generate_access_token(
-    self,
-    claims: TokenClaims,
+        self,
+        claims: TokenClaims,
     ) -> str:
         return f"token-{claims.user_id}"

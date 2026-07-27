@@ -44,6 +44,13 @@ def test_should_apply_percentage_to_money():
     assert result == Decimal("25.0000")
 
 
+def test_should_format_string_and_repr():
+    percentage = Percentage(15)
+
+    assert str(percentage) == "15%"
+    assert repr(percentage) == "Percentage(15.0000)"
+
+
 def test_should_identify_zero():
     assert Percentage.zero().is_zero()
 
@@ -62,3 +69,15 @@ def test_should_compare_equal_percentage():
 
 def test_should_compare_different_percentage():
     assert Percentage(10) != Percentage(20)
+
+
+def test_should_support_negation_and_absolute_value():
+    assert -Percentage(15) == Percentage(-15)
+    assert abs(Percentage(-15)) == Percentage(15)
+
+
+def test_should_return_notimplemented_for_invalid_operands():
+    percentage = Percentage(10)
+
+    assert percentage.__add__(10) is NotImplemented
+    assert percentage.__sub__(10) is NotImplemented

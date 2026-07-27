@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from domain.value_objects.token_claims import TokenClaims
+from src.domain.value_objects.token_claims import TokenClaims
 from src.infrastructure.security.fake_token_provider import (
     FakeTokenProvider,
 )

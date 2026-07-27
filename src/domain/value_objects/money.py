@@ -30,6 +30,8 @@ class Money:
 
     @staticmethod
     def _to_decimal(value: Number | Decimal) -> Decimal:
+        if isinstance(value, Money):
+            return value.value
         if isinstance(value, Decimal):
             return value
         return Decimal(str(value))
@@ -93,11 +95,17 @@ class Money:
     def __truediv__(self, other: Number) -> "Money":
         return Money(self.value / self._to_decimal(other))
 
+    def __mod__(self, other: Number) -> "Money":
+        return Money(self.value % self._to_decimal(other))
+
     def __neg__(self) -> "Money":
         return Money(-self.value)
 
     def __abs__(self) -> "Money":
         return Money(abs(self.value))
+
+    def __bool__(self) -> bool:
+        return not self.is_zero()
 
     def __str__(self) -> str:
         return f"R$ {self.value:,.2f}"
