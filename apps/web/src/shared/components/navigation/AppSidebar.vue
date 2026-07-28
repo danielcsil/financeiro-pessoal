@@ -2,6 +2,8 @@
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 
+import { useAuthStore } from "@/modules/auth/stores/auth.store";
+
 interface NavigationItem {
   label: string;
   to: string;
@@ -9,6 +11,7 @@ interface NavigationItem {
 }
 
 const route = useRoute();
+const auth = useAuthStore();
 
 const menu: NavigationItem[] = [
   {
@@ -65,6 +68,8 @@ const menu: NavigationItem[] = [
 
 const currentPath = computed(() => route.path);
 
+const user = computed(() => auth.user);
+
 function isActive(path: string) {
   return currentPath.value.startsWith(path);
 }
@@ -73,7 +78,7 @@ function isActive(path: string) {
 <template>
   <aside class="sidebar">
     <div class="sidebar__header">
-      <h2>Financial Advisor</h2>
+      <h2>Personal Finance</h2>
     </div>
 
     <nav class="sidebar__menu">
@@ -96,22 +101,17 @@ function isActive(path: string) {
 
     <footer class="sidebar__footer">
       <div class="sidebar__user">
-        <strong>Usuário</strong>
-        <small>usuario@email.com</small>
-      </div>
+        <strong>{{ user?.name ?? "Usuário" }}</strong>
 
-      <button
-        class="btn btn-secondary sidebar__logout"
-        type="button"
-      >
-        Sair
-      </button>
+        <small>
+          {{ user?.email ?? "" }}
+        </small>
+      </div>
     </footer>
   </aside>
 </template>
 
 <style scoped>
-
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -143,95 +143,70 @@ function isActive(path: string) {
   flex-direction: column;
 
   padding: 1rem;
-  gap: .35rem;
+  gap: 0.35rem;
 
   overflow-y: auto;
 }
 
 .sidebar__item {
-
   display: flex;
   align-items: center;
 
-  gap: .9rem;
+  gap: 0.9rem;
 
-  padding: .85rem 1rem;
+  padding: 0.85rem 1rem;
 
-  border-radius: .75rem;
+  border-radius: 0.75rem;
 
   color: var(--color-text);
 
   text-decoration: none;
 
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .sidebar__item:hover {
-
   background: var(--color-surface-hover);
-
 }
 
 .sidebar__item.active {
-
   background: var(--color-primary);
-
   color: white;
-
 }
 
 .sidebar__icon {
-
   width: 24px;
-
   text-align: center;
-
 }
 
 .sidebar__label {
-
   flex: 1;
-
 }
 
 .sidebar__footer {
-
   border-top: 1px solid var(--color-border);
-
   padding: 1.25rem;
-
 }
 
 .sidebar__user {
-
   display: flex;
-
   flex-direction: column;
+  gap: 0.25rem;
+}
 
-  margin-bottom: 1rem;
-
+.sidebar__user strong {
+  color: var(--color-text);
+  font-size: 0.95rem;
 }
 
 .sidebar__user small {
-
   color: var(--color-text-secondary);
-
-}
-
-.sidebar__logout {
-
-  width: 100%;
-
+  word-break: break-word;
 }
 
 @media (max-width: 1024px) {
-
-.sidebar{
-
-display:none;
-
+  .sidebar {
+    display: none;
+  }
 }
-
-}
-
 </style>

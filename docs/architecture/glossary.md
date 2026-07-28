@@ -1,19 +1,20 @@
-
 # Sistema Financeiro Pessoal
 
-# Glossário do Domínio
+# Glossário
 
 ## Objetivo
 
-Este documento define a linguagem oficial do domínio.
+Este documento reúne os principais termos utilizados no domínio do **Personal Finance**.
 
-Todos os nomes utilizados no sistema deverão seguir este glossário.
+Seu objetivo é padronizar a linguagem utilizada entre desenvolvedores, analistas e usuários do sistema, garantindo consistência na documentação e na implementação.
+
+Todos os nomes utilizados no código devem seguir este glossário.
 
 ---
 
 ## Account
 
-Representa um local onde existe saldo financeiro.
+Representa um local onde o usuário mantém recursos financeiros.
 
 Exemplos:
 
@@ -25,121 +26,218 @@ Exemplos:
 
 ---
 
+## Asset
+
+Representa um bem ou investimento pertencente ao usuário.
+
+Exemplos:
+
+- Imóvel
+- Veículo
+- Ações
+- Tesouro Direto
+
+---
+
 ## Balance
 
-Saldo disponível em uma conta.
+Representa o saldo atual de uma conta.
 
-Sempre representado por Money.
-
----
-
-## Transaction
-
-Qualquer movimentação financeira.
-
-Pode representar:
-
-- Receita
-- Despesa
-- Transferência
-- Ajuste
-
----
-
-## Income
-
-Movimentação que aumenta o saldo.
-
----
-
-## Expense
-
-Movimentação que reduz o saldo.
-
----
-
-## Transfer
-
-Movimentação composta por duas transações.
-
-Uma saída.
-
-Uma entrada.
-
----
-
-## Category
-
-Classificação de uma movimentação.
-
----
-
-## Credit Card
-
-Instrumento de pagamento.
-
-Não representa dinheiro disponível.
-
-Representa dívida.
-
----
-
-## Invoice
-
-Conjunto de compras realizadas em determinado período.
-
----
-
-## Installment
-
-Uma parcela pertencente a uma compra.
-
----
-
-## Investment
-
-Aplicação financeira.
-
----
-
-## Goal
-
-Meta financeira.
+Sempre é representado pelo Value Object `Money`.
 
 ---
 
 ## Budget
 
-Planejamento financeiro.
+Representa o planejamento financeiro para um determinado período.
+
+Pode estabelecer limites de gastos, metas de economia e distribuição de receitas.
 
 ---
 
-## Repository
+## Category
 
-Responsável pela persistência.
+Representa a classificação de um lançamento ou evento financeiro.
 
-Nunca contém regra de negócio.
+Exemplos:
+
+- Alimentação
+- Moradia
+- Transporte
+- Educação
+- Saúde
 
 ---
 
-## Value Object
+## Credit Card
 
-Objeto imutável identificado apenas pelo valor.
+Representa um cartão de crédito.
 
----
+Não possui saldo próprio.
 
-## Entity
-
-Objeto identificado por identidade própria.
+Seu objetivo é registrar despesas que serão consolidadas em uma fatura.
 
 ---
 
 ## Domain Service
 
-Objeto responsável por regras envolvendo múltiplas entidades.
+Objeto responsável por executar regras de negócio que envolvem múltiplas entidades ou agregados.
+
+---
+
+## Entity
+
+Objeto do domínio que possui identidade própria ao longo do tempo.
+
+---
+
+## Expense
+
+Representa uma saída de recursos financeiros.
+
+---
+
+## Financial Diagnosis
+
+Representa a análise da situação financeira do usuário em determinado momento.
+
+É produzido a partir dos eventos financeiros registrados.
+
+---
+
+## Financial Event
+
+Representa qualquer fato financeiro que impacte ou venha a impactar o fluxo de caixa.
+
+Exemplos:
+
+- Receita
+- Despesa
+- Transferência
+- Pagamento
+- Compra
+- Estorno
+- Juros
+- Rendimento
+
+É o principal conceito do domínio.
+
+---
+
+## Financial Goal
+
+Representa um objetivo financeiro definido pelo usuário.
+
+Exemplos:
+
+- Criar reserva de emergência
+- Comprar um veículo
+- Quitar um financiamento
+
+---
+
+## Financial Projection
+
+Representa uma simulação da evolução financeira baseada em eventos previstos e históricos.
+
+---
+
+## Income
+
+Representa uma entrada de recursos financeiros.
+
+---
+
+## Installment
+
+Representa uma parcela pertencente a uma compra, empréstimo ou financiamento.
+
+Cada parcela possui seu próprio ciclo de vida.
+
+---
+
+## Invoice
+
+Representa a fatura de um cartão de crédito.
+
+Agrupa despesas realizadas durante um período.
+
+---
+
+## Liability
+
+Representa uma obrigação financeira do usuário.
+
+Exemplos:
+
+- Empréstimos
+- Financiamentos
+- Dívidas
+
+---
+
+## Money
+
+Value Object responsável por representar valores monetários com precisão decimal.
+
+---
+
+## Recommendation
+
+Representa uma sugestão produzida pelo sistema para melhorar a saúde financeira do usuário.
+
+---
+
+## Repository
+
+Abstração responsável pela persistência dos agregados do domínio.
+
+Nunca contém regras de negócio.
+
+---
+
+## Recurring Expense
+
+Representa uma despesa recorrente planejada.
+
+Exemplos:
+
+- Aluguel
+- Internet
+- Academia
+
+---
+
+## Recurring Income
+
+Representa uma receita recorrente planejada.
+
+Exemplos:
+
+- Salário
+- Aluguel recebido
+- Bolsa de estudos
+
+---
+
+## Transfer
+
+Representa uma movimentação entre duas contas.
+
+Possui um evento de saída e um evento correspondente de entrada.
 
 ---
 
 ## Use Case
 
-Operação executada pelo usuário.
+Representa uma ação executada pelo usuário através do sistema.
+
+Coordena a execução das regras de negócio sem implementá-las.
+
+---
+
+## Value Object
+
+Objeto imutável identificado apenas pelos seus atributos.
+
+Não possui identidade própria.
