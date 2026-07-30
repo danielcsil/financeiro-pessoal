@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from enum import Enum
 from uuid import UUID, uuid4
 
@@ -22,17 +22,20 @@ class UserStatus(Enum):
 @dataclass(slots=True)
 class User:
     """
-    Represents a system user.
+    Domain entity representing a system user.
 
-    This entity is independent of infrastructure concerns such as
-    persistence, authentication frameworks or web APIs.
+    This entity is completely independent from persistence,
+    authentication frameworks and web APIs.
     """
 
-    name: str
-    email: Email
-    password: HashedPassword
-
     id: UUID = field(default_factory=uuid4)
+
+    name: str = ""
+    email: Email = field(default_factory=lambda: Email("placeholder@example.com"))
+    password: HashedPassword = field(
+        default_factory=lambda: HashedPassword("placeholder")
+    )
+
     status: UserStatus = UserStatus.ACTIVE
 
     email_verified: bool = False
@@ -50,12 +53,17 @@ class User:
     @classmethod
     def create(
         cls,
+        *,
         name: str,
         email: str | Email,
         password: str | HashedPassword,
-    ) -> "User":
+    ) -> User:
+        """
+        Factory method for creating a new user.
+        """
+
         return cls(
-            name=name,
+            name=name.strip(),
             email=email if isinstance(email, Email) else Email(email),
             password=(
                 password
@@ -65,44 +73,38 @@ class User:
         )
 
     def activate(self) -> None:
-        """
-        Activates the user account.
-        """
+        """Activates the account."""
+
         self.status = UserStatus.ACTIVE
         self.touch()
 
     def lock(self) -> None:
-        """
-        Locks the user account.
-        """
+        """Locks the account."""
+
         self.status = UserStatus.LOCKED
         self.touch()
 
     def disable(self) -> None:
-        """
-        Disables the user account.
-        """
+        """Disables the account."""
+
         self.status = UserStatus.DISABLED
         self.touch()
 
     def verify_email(self) -> None:
-        """
-        Marks the e-mail address as verified.
-        """
+        """Marks the e-mail as verified."""
+
         self.email_verified = True
         self.touch()
 
     def register_login(self) -> None:
-        """
-        Stores the instant of the latest successful login.
-        """
+        """Stores the instant of the last successful login."""
+
         self.last_login_at = datetime.now(UTC)
         self.touch()
 
     def touch(self) -> None:
-        """
-        Updates the modification timestamp.
-        """
+        """Updates the modification timestamp."""
+
         self.updated_at = datetime.now(UTC)
 
     @property
@@ -110,7 +112,16 @@ class User:
         """
         Indicates whether the account can authenticate.
         """
+
         return (
-            self.status == UserStatus.ACTIVE
+            self.status is UserStatus.ACTIVE
             and self.email_verified
         )
+
+    @property
+    def is_locked(self) -> bool:
+        return self.status is UserStatus.LOCKED
+
+    @property
+    def is_disabled(self) -> bool:
+        return self.status is UserStatus.DISABLED

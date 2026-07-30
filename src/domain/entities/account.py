@@ -1,79 +1,131 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from uuid import UUID, uuid4
+"""
+Aggregate Root que representa uma conta financeira.
 
-from src.domain.enums import AccountStatus, AccountType
-from src.domain.value_objects import Money
+Uma conta representa um local onde recursos financeiros são
+armazenados ou movimentados, como conta corrente, poupança,
+carteira ou conta de investimento.
+
+A entidade é responsável apenas pelo seu próprio estado e pelas
+regras relacionadas ao seu ciclo de vida.
+"""
+
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+
+from src.domain.value_objects.identifiers.account_id import AccountId
+from src.domain.value_objects.identifiers.user_id import UserId
 
 
 @dataclass(slots=True)
 class Account:
+    """
+    Aggregate Root que representa uma conta financeira.
+    """
 
-    id: UUID = field(default_factory=uuid4)
+    user_id: UserId
+    name: str
 
-    _name: str = field(init=False, repr=False)
+    id: AccountId = field(default_factory=AccountId.new)
 
-    _type: AccountType = field(init=False, repr=False)
+    description: str | None = None
 
-    _status: AccountStatus = field(
-        default=AccountStatus.ACTIVE,
-        init=False,
-        repr=False,
+    institution: str | None = None
+
+    is_active: bool = True
+
+    created_at: datetime = field(
+        default_factory=lambda: datetime.now(UTC)
     )
 
-    _balance: Money = field(
-        default_factory=Money.zero,
-        init=False,
-        repr=False,
+    updated_at: datetime = field(
+        default_factory=lambda: datetime.now(UTC)
     )
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
+        user_id: UserId,
         name: str,
-        type: AccountType = AccountType.CHECKING,
-        id: UUID | None = None,
-    ):
-        self.id = id or uuid4()
+        institution: str | None = None,
+        description: str | None = None,
+    ) -> "Account":
+        """
+        Cria uma nova conta.
+        """
 
-        self._status = AccountStatus.ACTIVE
-        self._balance = Money.zero()
+        name = name.strip()
 
-        self.rename(name)
-        self._type = type
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def type(self) -> AccountType:
-        return self._type
-
-    @property
-    def status(self) -> AccountStatus:
-        return self._status
-
-    @property
-    def balance(self) -> Money:
-        return self._balance
-
-    def rename(self, new_name: str) -> None:
-        new_name = new_name.strip()
-
-        if not new_name:
+        if not name:
             raise ValueError("Account name cannot be empty.")
 
-        self._name = new_name
+        return cls(
+            user_id=user_id,
+            name=name,
+            institution=institution,
+            description=description,
+        )
+
+    def rename(
+        self,
+        name: str,
+    ) -> None:
+        """
+        Altera o nome da conta.
+        """
+
+        name = name.strip()
+
+        if not name:
+            raise ValueError("Account name cannot be empty.")
+
+        self.name = name
+        self.touch()
+
+    def change_description(
+        self,
+        description: str | None,
+    ) -> None:
+        """
+        Atualiza a descrição da conta.
+        """
+
+        self.description = description
+        self.touch()
+
+    def change_institution(
+        self,
+        institution: str | None,
+    ) -> None:
+        """
+        Atualiza a instituição financeira.
+        """
+
+        self.institution = institution
+        self.touch()
 
     def activate(self) -> None:
-        self._status = AccountStatus.ACTIVE
+        """
+        Ativa a conta.
+        """
+
+        if not self.is_active:
+            self.is_active = True
+            self.touch()
 
     def deactivate(self) -> None:
-        self._status = AccountStatus.INACTIVE
+        """
+        Desativa a conta.
+        """
 
-    def close(self) -> None:
-        self._status = AccountStatus.CLOSED
+        if self.is_active:
+            self.is_active = False
+            self.touch()
 
-    def __str__(self) -> str:
-        return self._name
+    def touch(self) -> None:
+        """
+        Atualiza o instante da última modificação.
+        """
+
+        self.updated_at = datetime.now(UTC)

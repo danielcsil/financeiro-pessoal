@@ -7,31 +7,32 @@ from src.application.dto.auth.register_user_response import (
     RegisterUserResponse,
 )
 from src.domain.entities.user import User
-from src.domain.repositories.user_repository import UserRepository
-from src.domain.services.password_hasher import PasswordHasher
-from src.domain.value_objects.email import Email
-
 from src.domain.exceptions import (
+    EmailAlreadyExistsError,
     PasswordMismatchError,
     RequiredFieldError,
     TermsNotAcceptedError,
-    EmailAlreadyExistsError
 )
-
+from src.domain.repositories.unit_of_work import UnitOfWork
+from src.domain.services.password_hasher import PasswordHasher
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.hashed_password import (
+    HashedPassword,
+)
 from src.domain.value_objects.password import Password
-from src.domain.value_objects.hashed_password import HashedPassword
+
 
 class RegisterUserUseCase:
     """
-    Handles the user registration process.
+    Use case responsible for registering a new user.
     """
 
     def __init__(
         self,
-        user_repository: UserRepository,
+        unit_of_work: UnitOfWork,
         password_hasher: PasswordHasher,
     ) -> None:
-        self._user_repository = user_repository
+        self._uow = unit_of_work
         self._password_hasher = password_hasher
 
     def execute(
@@ -43,35 +44,47 @@ class RegisterUserUseCase:
         """
 
         name = request.name.strip()
+
+        if not name:
+            raise RequiredFieldError(
+                "Name is required."
+            )
+
+        if request.password != request.confirm_password:
+            raise PasswordMismatchError(
+                "Passwords do not match."
+            )
+
+        if not request.accepted_terms:
+            raise TermsNotAcceptedError(
+                "Terms must be accepted."
+            )
+
         email = Email(request.email)
         password = Password(request.password)
 
-        if not name:
-            raise RequiredFieldError("Name is required.")
+        with self._uow as uow:
 
-        if not email:
-            raise RequiredFieldError("Email is required.")
+            if uow.users.exists_by_email(email):
+                raise EmailAlreadyExistsError(
+                    "Email already registered."
+                )
 
-        if request.password != request.confirm_password:
-            raise PasswordMismatchError("Passwords do not match.")
+            hashed_password = HashedPassword(
+                self._password_hasher.hash(
+                    password.value
+                )
+            )
 
-        if not request.accepted_terms:
-            raise TermsNotAcceptedError("Terms must be accepted.")
+            user = User.create(
+                name=name,
+                email=email,
+                password=hashed_password,
+            )
 
-        if self._user_repository.exists_by_email(email):
-            raise EmailAlreadyExistsError("Email already registered.")
+            uow.users.add(user)
 
-        password_hash = HashedPassword(
-            self._password_hasher.hash(password.value)
-        )
-
-        user = User(
-            name=name,
-            email=email,
-            password=password_hash,
-        )
-
-        self._user_repository.save(user)
+            uow.commit()
 
         return RegisterUserResponse(
             id=user.id,

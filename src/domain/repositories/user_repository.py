@@ -1,5 +1,16 @@
 from __future__ import annotations
 
+"""
+Contrato do repositório de usuários.
+
+O repositório representa a coleção de agregados User do domínio,
+abstraindo completamente a tecnologia de persistência utilizada.
+
+A responsabilidade de confirmar ou desfazer alterações pertence à
+Unit of Work. Por esse motivo, este contrato não expõe operações
+explícitas de atualização (update) ou persistência (commit).
+"""
+
 from abc import ABC, abstractmethod
 from uuid import UUID
 
@@ -7,53 +18,71 @@ from src.domain.entities.user import User
 from src.domain.value_objects.email import Email
 
 
-
 class UserRepository(ABC):
     """
-    Defines the contract for user persistence.
-
-    Application use cases depend on this abstraction instead of
-    concrete database implementations.
+    Contrato para persistência e consulta de usuários.
     """
 
     @abstractmethod
-    def save(self, user: User) -> None:
+    def add(
+        self,
+        user: User,
+    ) -> None:
         """
-        Persists a new user.
+        Adiciona um novo usuário ao repositório.
+
+        A persistência definitiva será realizada pela Unit of Work.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, user: User) -> None:
+    def remove(
+        self,
+        user: User,
+    ) -> None:
         """
-        Updates an existing user.
+        Remove um usuário do repositório.
+
+        A remoção definitiva será realizada pela Unit of Work.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, user_id: UUID) -> None:
+    def find_by_id(
+        self,
+        user_id: UUID,
+    ) -> User | None:
         """
-        Deletes a user by its identifier.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def find_by_id(self, user_id: UUID) -> User | None:
-        """
-        Returns a user by its identifier.
+        Recupera um usuário pelo identificador.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def find_by_email(self, email: Email) -> User | None:
+    def find_by_email(
+        self,
+        email: Email,
+    ) -> User | None:
         """
-        Returns a user by e-mail.
+        Recupera um usuário pelo endereço de e-mail.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def exists_by_email(self, email: Email) -> bool:
+    def exists_by_id(
+        self,
+        user_id: UUID,
+    ) -> bool:
         """
-        Checks whether a user with the given e-mail already exists.
+        Verifica se existe um usuário com o identificador informado.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def exists_by_email(
+        self,
+        email: Email,
+    ) -> bool:
+        """
+        Verifica se existe um usuário com o e-mail informado.
         """
         raise NotImplementedError

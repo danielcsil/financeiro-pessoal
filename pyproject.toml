@@ -1,28 +1,76 @@
-
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "financeiro-pessoal"
-version = "0.1.0-alpha.9"
-description = "Sistema de Gestão Financeira Pessoal"
+version = "1.0.0"
+description = "Sistema inteligente para gestão, planejamento e análise financeira pessoal."
+readme = "README.md"
 requires-python = ">=3.12"
+
 authors = [
     { name = "Daniel Cunha da Silva" }
 ]
 
-dependencies = []
+license = { text = "MIT" }
+
+keywords = [
+    "finance",
+    "personal-finance",
+    "financial-planning",
+    "cash-flow",
+    "ddd",
+    "clean-architecture",
+    "fastapi",
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Framework :: FastAPI",
+]
+
+dependencies = [
+    # API
+    "fastapi>=0.116.1",
+    "uvicorn[standard]>=0.35.0",
+
+    # Banco de Dados
+    "sqlalchemy>=2.0.43",
+    "alembic>=1.16.4",
+    "psycopg[binary]>=3.2.9",
+
+    # Configuração
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "python-dotenv>=1.1.1",
+
+    # Segurança
+    "bcrypt>=4.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.5.0",
+
+    # Upload de arquivos
+    "python-multipart>=0.0.20",
+]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.2",
-    "pytest-cov>=5.0",
-    "black>=24.0",
-    "ruff>=0.5",
-    "isort>=5.13",
-    "mypy>=1.10"
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "black>=25.1.0",
+    "ruff>=0.12.7",
+    "isort>=6.0.1",
+    "mypy>=1.17.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/danielcunha/financeiro-pessoal"
+Repository = "https://github.com/danielcunha/financeiro-pessoal"
+Issues = "https://github.com/danielcunha/financeiro-pessoal/issues"
 
 [tool.pytest.ini_options]
 pythonpath = [
@@ -66,7 +114,6 @@ line-length = 88
 target-version = "py312"
 
 [tool.ruff.lint]
-
 select = [
     "E",
     "F",
@@ -77,25 +124,18 @@ select = [
     "SIM",
 ]
 
-ignore = [
-]
+ignore = []
 
 [tool.mypy]
-
 python_version = "3.12"
 
 strict = true
 
-bcrypt = "^4.2.0"
-
 warn_unused_configs = true
-
 warn_return_any = true
-
 warn_unused_ignores = true
 
 disallow_untyped_defs = true
-
 disallow_any_generics = false
 
 ignore_missing_imports = true
