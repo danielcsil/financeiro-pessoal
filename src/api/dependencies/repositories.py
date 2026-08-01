@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from functools import lru_cache
+
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 
@@ -32,6 +34,7 @@ def get_session() -> Session:
     return SessionFactory()
 
 
+@lru_cache
 def get_user_repository() -> UserRepository:
     """
     Returns a concrete UserRepository.

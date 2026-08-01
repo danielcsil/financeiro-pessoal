@@ -22,6 +22,23 @@ from src.domain.value_objects.hashed_password import (
 from src.domain.value_objects.password import Password
 
 
+class _RepositoryUnitOfWork:
+    def __init__(self, user_repository) -> None:
+        self.users = user_repository
+
+    def __enter__(self) -> "_RepositoryUnitOfWork":
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        return None
+
+    def commit(self) -> None:
+        return None
+
+    def rollback(self) -> None:
+        return None
+
+
 class RegisterUserUseCase:
     """
     Use case responsible for registering a new user.
@@ -29,9 +46,21 @@ class RegisterUserUseCase:
 
     def __init__(
         self,
-        unit_of_work: UnitOfWork,
-        password_hasher: PasswordHasher,
+        unit_of_work: UnitOfWork | None = None,
+        password_hasher: PasswordHasher | None = None,
+        user_repository=None,
     ) -> None:
+        if unit_of_work is None:
+            if user_repository is None:
+                raise TypeError(
+                    "unit_of_work or user_repository must be provided."
+                )
+
+            unit_of_work = _RepositoryUnitOfWork(user_repository)
+
+        if password_hasher is None:
+            raise TypeError("password_hasher must be provided.")
+
         self._uow = unit_of_work
         self._password_hasher = password_hasher
 
@@ -50,6 +79,9 @@ class RegisterUserUseCase:
                 "Name is required."
             )
 
+        email = Email(request.email)
+        password = Password(request.password)
+
         if request.password != request.confirm_password:
             raise PasswordMismatchError(
                 "Passwords do not match."
@@ -59,9 +91,6 @@ class RegisterUserUseCase:
             raise TermsNotAcceptedError(
                 "Terms must be accepted."
             )
-
-        email = Email(request.email)
-        password = Password(request.password)
 
         with self._uow as uow:
 
