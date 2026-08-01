@@ -1,17 +1,14 @@
 import { http } from "@/shared/api";
 
-import type { RegisterRequest } from "../dto/register-request";
-import type { RegisterResponse } from "../dto/register-response";
 import type { LoginRequest } from "../dto/login-request";
 import type { LoginResponse } from "../dto/login-response";
+import type { RegisterRequest } from "../dto/register-request";
+import type { RegisterResponse } from "../dto/register-response";
 
-type AuthUser = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-export class AuthApi {
+class AuthApi {
+  /**
+   * Cadastro de usuário.
+   */
   async register(
     request: RegisterRequest,
   ): Promise<RegisterResponse> {
@@ -21,35 +18,47 @@ export class AuthApi {
         name: request.name,
         email: request.email,
         password: request.password,
-        password_confirmation:
-          request.passwordConfirmation,
-        accept_terms: request.acceptTerms,
+        password_confirmation: request.passwordConfirmation,
       },
     );
 
     return data;
   }
 
+  /**
+   * Autenticação.
+   */
   async login(
     request: LoginRequest,
   ): Promise<LoginResponse> {
-    const { data } =
-      await http.post<LoginResponse>(
-        "/auth/login",
-        request,
-      );
+    const { data } = await http.post<LoginResponse>(
+      "/auth/login",
+      {
+        email: request.email,
+        password: request.password,
+      },
+    );
 
     return data;
   }
 
-  async me(): Promise<AuthUser> {
-    const { data } = await http.get<AuthUser>("/auth/me");
+  /**
+   * Obtém o usuário autenticado.
+   */
+  async me() {
+    const { data } = await http.get("/auth/me");
 
     return data;
   }
 
+  /**
+   * Logout.
+   *
+   * Nesta primeira versão o backend não possui endpoint
+   * específico. A remoção do token será feita localmente.
+   */
   async logout(): Promise<void> {
-    await http.post("/auth/logout");
+    return Promise.resolve();
   }
 }
 

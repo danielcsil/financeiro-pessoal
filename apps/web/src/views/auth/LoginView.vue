@@ -45,75 +45,44 @@
 </template>
 
 <script setup lang="ts">
+import axios from "axios";
 import { reactive, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 import { useAuthStore } from "@/modules/auth/stores/auth.store";
 
-/**
- * Router utilizado para navegação após autenticação.
- */
 const router = useRouter();
 
-/**
- * Permite recuperar a rota originalmente solicitada
- * antes do redirecionamento para a tela de login.
- */
-const route = useRoute();
+const authStore = useAuthStore();
 
-/**
- * Store responsável por toda a autenticação da aplicação.
- *
- * A View nunca acessa diretamente:
- * - API
- * - localStorage
- * - JWT
- */
-const auth = useAuthStore();
+const loading = ref(false);
 
-/**
- * Dados informados pelo usuário.
- */
 const form = reactive({
   email: "",
   password: "",
 });
 
-/**
- * Controla o estado de submissão do formulário.
- *
- * Evita múltiplos cliques enquanto a autenticação
- * está em andamento.
- */
-const loading = ref(false);
-
-/**
- * Realiza o processo de autenticação.
- *
- * Fluxo:
- *
- * 1. Delega o login para a AuthStore.
- * 2. A AuthStore autentica na API.
- * 3. Persiste o JWT.
- * 4. Carrega o usuário autenticado.
- * 5. Redireciona para a rota originalmente solicitada
- *    ou para o Dashboard.
- */
 async function onSubmit(): Promise<void> {
   loading.value = true;
 
   try {
-    await auth.login(form.email, form.password);
+    await authStore.login(
+      form.email,
+      form.password,
+    );
 
-    const redirect =
-      typeof route.query.redirect === "string"
-        ? route.query.redirect
-        : "/dashboard";
+    await router.push("/dashboard");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      alert(
+        error.response?.data?.detail ??
+          "Usuário ou senha inválidos.",
+      );
+    } else {
+      alert("Ocorreu um erro inesperado.");
+    }
 
-    await router.push(redirect);
-  } catch (error) {
     console.error(error);
-    alert("E-mail ou senha inválidos.");
   } finally {
     loading.value = false;
   }
@@ -134,7 +103,7 @@ async function onSubmit(): Promise<void> {
   max-width: 460px;
   padding: 2rem;
   border-radius: 12px;
-  background: #fff;
+  background: #ffffff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
@@ -158,6 +127,7 @@ async function onSubmit(): Promise<void> {
   padding: 0.75rem;
   border: 1px solid #d0d7de;
   border-radius: 8px;
+  font-size: 1rem;
 }
 
 .btn-primary {
@@ -166,10 +136,11 @@ async function onSubmit(): Promise<void> {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
 }
 
 .btn-primary:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
-  opacity: 0.7;
 }
 </style>

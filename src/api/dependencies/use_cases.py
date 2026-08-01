@@ -1,5 +1,12 @@
 from __future__ import annotations
 
+from src.api.dependencies.repositories import (
+    get_user_repository,
+)
+from src.api.dependencies.services import (
+    get_password_verifier,
+    get_token_provider,
+)
 from src.application.use_cases.auth.get_current_user import (
     GetCurrentUserUseCase,
 )
@@ -46,22 +53,14 @@ def get_register_user_use_case() -> RegisterUserUseCase:
 
 
 def get_login_user_use_case() -> LoginUserUseCase:
-    """
-    Creates the LoginUser use case.
-    """
-
     return LoginUserUseCase(
-        unit_of_work=get_unit_of_work(),
+        user_repository=get_user_repository(),
         password_verifier=get_password_verifier(),
         token_provider=get_token_provider(),
     )
 
 
 def get_current_user_use_case() -> GetCurrentUserUseCase:
-    """
-    Creates the GetCurrentUser use case.
-    """
-
     return GetCurrentUserUseCase(
-        unit_of_work=get_unit_of_work(),
+        user_repository=get_user_repository(),
     )
