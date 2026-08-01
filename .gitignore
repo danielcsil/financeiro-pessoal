@@ -38,3 +38,9 @@ apps/web/dist/
 
 # macOS
 .DS_Store
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.bak
+*.bak2

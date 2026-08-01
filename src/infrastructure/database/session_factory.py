@@ -1,11 +1,79 @@
 from __future__ import annotations
 
 """
-Factory responsável pela criação e gerenciamento de sessões do SQLAlchemy.
+SQLAlchemy Session Factory.
 
-A sessão representa uma unidade de trabalho (Unit of Work) sobre o banco
-de dados. Este módulo centraliza sua criação para evitar duplicação de
-configuração em diferentes partes da aplicação.
+===============================================================================
+Purpose
+===============================================================================
+
+Centralizes the creation and lifecycle management of SQLAlchemy sessions.
+
+A SQLAlchemy Session represents a persistence context responsible for tracking
+changes performed during a database interaction.
+
+This module provides a single place responsible for configuring sessions,
+ensuring every component of the application uses the same behavior.
+
+===============================================================================
+Architecture
+===============================================================================
+
+                    SQLAlchemy Engine
+                            │
+                            ▼
+                     SessionFactory
+                    ╱               ╲
+                   ▼                 ▼
+        UnitOfWork            FastAPI Dependency
+                   ╲               ╱
+                    ▼             ▼
+                 SQLAlchemy Session
+
+===============================================================================
+Responsibilities
+===============================================================================
+
+This module is responsible for:
+
+    • configuring the SQLAlchemy SessionFactory;
+
+    • creating database sessions;
+
+    • providing context managers for scripts;
+
+    • exposing a FastAPI dependency when direct sessions are required.
+
+===============================================================================
+Design Principles
+===============================================================================
+
+• Single SessionFactory for the application.
+
+• Sessions are short-lived.
+
+• Sessions are never shared between requests.
+
+• Transaction boundaries belong to the UnitOfWork.
+
+===============================================================================
+Important
+===============================================================================
+
+Application use cases should NEVER receive SQLAlchemy Session objects directly.
+
+Business operations must always execute through UnitOfWork, ensuring proper
+transaction management and repository coordination.
+
+The utilities provided here exist primarily for:
+
+    • infrastructure code;
+
+    • administrative scripts;
+
+    • database migrations;
+
+    • testing.
 """
 
 from collections.abc import Generator
@@ -16,10 +84,9 @@ from sqlalchemy.orm import sessionmaker
 
 from src.infrastructure.database.database import engine
 
-
-# -----------------------------------------------------------------------------
-# Configuração da fábrica de sessões
-# -----------------------------------------------------------------------------
+# ============================================================================
+# Session Factory
+# ============================================================================
 
 SessionFactory = sessionmaker(
     bind=engine,
@@ -28,21 +95,25 @@ SessionFactory = sessionmaker(
     expire_on_commit=False,
 )
 
-
-# -----------------------------------------------------------------------------
+# ============================================================================
 # Context Manager
-# -----------------------------------------------------------------------------
+# ============================================================================
+
 
 @contextmanager
 def session_scope() -> Generator[Session, None, None]:
     """
-    Cria uma sessão do SQLAlchemy.
+    Creates a transactional SQLAlchemy session.
 
-    Em caso de sucesso, realiza commit.
-    Em caso de erro, realiza rollback.
+    This helper is intended for infrastructure code, administrative scripts and
+    tests.
 
-    Exemplo:
+    The transaction is automatically committed if no exception occurs.
+    Otherwise, the transaction is rolled back before the exception is
+    propagated.
 
+    Example
+    -------
         with session_scope() as session:
             repository = SqlAlchemyUserRepository(session)
             ...
@@ -62,19 +133,25 @@ def session_scope() -> Generator[Session, None, None]:
         session.close()
 
 
-# -----------------------------------------------------------------------------
-# Dependency para FastAPI
-# -----------------------------------------------------------------------------
+# ============================================================================
+# FastAPI Dependency
+# ============================================================================
+
 
 def get_session() -> Generator[Session, None, None]:
     """
-    Dependency utilizada pela FastAPI.
+    Provides a SQLAlchemy session for FastAPI dependencies.
 
-    Exemplo:
+    This dependency should be used only when direct access to the session is
+    required by infrastructure components.
 
+    Application use cases should instead depend on UnitOfWork.
+
+    Example
+    -------
         @router.get("/")
         def endpoint(
-            session: Session = Depends(get_session)
+            session: Session = Depends(get_session),
         ):
             ...
     """

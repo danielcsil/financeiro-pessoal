@@ -1,28 +1,46 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from "vue-router";
 
-import RegisterView from "@/views/auth/RegisterView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
+import RegisterView from "@/views/auth/RegisterView.vue";
 
 import {
-  PublicLayout,
   AuthLayout,
   DashboardLayout,
+  PublicLayout,
 } from "@/shared/layouts";
+
+import financialAccountRoutes from "@/modules/financial-accounts/router";
 
 import { authGuard } from "./guards/auth.guard";
 
 /**
- * Definição das rotas da aplicação.
+ * ============================================================================
+ * Application Router
+ * ============================================================================
  *
- * A aplicação utiliza Layouts para separar as áreas:
- * - PublicLayout: páginas públicas
- * - AuthLayout: autenticação
- * - DashboardLayout: área autenticada
+ * The application is divided into three logical areas:
+ *
+ * • Public
+ * • Authentication
+ * • Authenticated Dashboard
+ *
+ * Each business module contributes its own routes, keeping the router modular
+ * and easy to evolve.
  */
+
 const routes: RouteRecordRaw[] = [
+  // ==========================================================================
+  // Public Area
+  // ==========================================================================
+
   {
     path: "/",
     component: PublicLayout,
+
     children: [
       {
         path: "",
@@ -32,52 +50,71 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
+  // ==========================================================================
+  // Authentication
+  // ==========================================================================
+
   {
     path: "/",
     component: AuthLayout,
+
     children: [
       {
         path: "/login",
         name: "login",
         component: LoginView,
       },
+
       {
         path: "/register",
         name: "register",
         component: RegisterView,
       },
+
       {
         path: "forgot-password",
         name: "forgot-password",
-        component: () => import("@/views/auth/ForgotPasswordView.vue"),
+        component: () =>
+          import("@/views/auth/ForgotPasswordView.vue"),
       },
     ],
   },
+
+  // ==========================================================================
+  // Dashboard
+  // ==========================================================================
 
   {
     path: "/dashboard",
 
-    /**
-     * Todas as rotas filhas deste layout exigem autenticação.
-     */
+    component: DashboardLayout,
+
     meta: {
       requiresAuth: true,
     },
 
-    component: DashboardLayout,
-
     children: [
       {
         path: "",
+
         name: "dashboard",
-        component: () => import("@/views/dashboard/DashboardView.vue"),
+
+        component: () =>
+          import("@/views/dashboard/DashboardView.vue"),
       },
+
+      // ----------------------------------------------------------------------
+      // Financial Accounts Module
+      // ----------------------------------------------------------------------
+
+      ...financialAccountRoutes,
     ],
   },
 
-  /**
-   * Redireciona qualquer rota inexistente para a Home.
-   */
+  // ==========================================================================
+  // Fallback
+  // ==========================================================================
+
   {
     path: "/:pathMatch(.*)*",
     redirect: "/",
@@ -85,7 +122,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 /**
- * Instância principal do Vue Router.
+ * Main router instance.
  */
 const router = createRouter({
   history: createWebHistory(),
@@ -93,10 +130,13 @@ const router = createRouter({
 });
 
 /**
- * Guard global responsável por:
- * - restaurar a sessão;
- * - proteger rotas privadas;
- * - redirecionar usuários não autenticados.
+ * Global navigation guard.
+ *
+ * Responsible for:
+ *
+ * • Restoring authenticated sessions.
+ * • Protecting private routes.
+ * • Redirecting anonymous users.
  */
 router.beforeEach(authGuard);
 

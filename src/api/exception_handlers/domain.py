@@ -20,6 +20,13 @@ from src.domain.exceptions.terms_not_accepted_error import (
     TermsNotAcceptedError,
 )
 
+from src.domain.exceptions.duplicate_financial_account_error import (
+    DuplicateFinancialAccountError,
+)
+from src.domain.exceptions.financial_account_not_found_error import (
+    FinancialAccountNotFoundError,
+)
+
 def register_domain_exception_handlers(
     app: FastAPI,
 ) -> None:
@@ -85,6 +92,34 @@ def register_domain_exception_handlers(
             status_code=status.HTTP_400_BAD_REQUEST,
             content=ErrorResponse(
                 error="INVALID_EMAIL",
+                message=str(exc),
+            ).model_dump(),
+        )
+
+    @app.exception_handler(DuplicateFinancialAccountError,)
+    async def duplicate_financial_account(
+        request: Request,
+        exc: DuplicateFinancialAccountError,
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content=ErrorResponse(
+                error="DUPLICATE_FINANCIAL_ACCOUNT",
+                message=str(exc),
+            ).model_dump(),
+        )
+
+    @app.exception_handler(
+        FinancialAccountNotFoundError,
+    )
+    async def financial_account_not_found(
+        request: Request,
+        exc: FinancialAccountNotFoundError,
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content=ErrorResponse(
+                error="FINANCIAL_ACCOUNT_NOT_FOUND",
                 message=str(exc),
             ).model_dump(),
         )

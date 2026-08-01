@@ -2,10 +2,10 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import delete
 
-from src.api.main import app
+from api.app import app
 from src.api.dependencies.repositories import get_user_repository
 from src.infrastructure.database.session_factory import SessionFactory
-from src.infrastructure.persistence.sqlalchemy.models.user_model import (
+from src.infrastructure.database.models.user_model import (
     UserModel,
 )
 

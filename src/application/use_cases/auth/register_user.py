@@ -1,5 +1,69 @@
 from __future__ import annotations
 
+"""
+Register User Use Case.
+
+===============================================================================
+Purpose
+===============================================================================
+
+Registers a new user in the system.
+
+This use case validates the registration request, verifies business rules,
+creates the User aggregate and persists it using the application's
+transactional Unit of Work.
+
+===============================================================================
+Business Rules
+===============================================================================
+
+The following rules are enforced:
+
+    • Name is required.
+
+    • Email must be valid.
+
+    • Password must be valid.
+
+    • Password confirmation must match.
+
+    • Terms of use must be accepted.
+
+    • Email must be unique.
+
+===============================================================================
+Architecture
+===============================================================================
+
+Application Layer
+
+        │
+
+        ▼
+
+RegisterUserUseCase
+
+        │
+
+        ▼
+
+UnitOfWork
+
+        │
+
+        ▼
+
+UserRepository
+
+===============================================================================
+Transaction
+===============================================================================
+
+The registration process is transactional.
+
+If any validation fails, no data is persisted.
+"""
+
 from src.application.dto.auth.register_user_request import (
     RegisterUserRequest,
 )
@@ -13,55 +77,34 @@ from src.domain.exceptions import (
     RequiredFieldError,
     TermsNotAcceptedError,
 )
-from src.domain.repositories.unit_of_work import UnitOfWork
-from src.domain.services.password_hasher import PasswordHasher
-from src.domain.value_objects.email import Email
+from src.domain.repositories.unit_of_work import (
+    UnitOfWork,
+)
+from src.domain.services.password_hasher import (
+    PasswordHasher,
+)
+from src.domain.value_objects.email import (
+    Email,
+)
 from src.domain.value_objects.hashed_password import (
     HashedPassword,
 )
-from src.domain.value_objects.password import Password
-
-
-class _RepositoryUnitOfWork:
-    def __init__(self, user_repository) -> None:
-        self.users = user_repository
-
-    def __enter__(self) -> "_RepositoryUnitOfWork":
-        return self
-
-    def __exit__(self, exc_type, exc, tb) -> None:
-        return None
-
-    def commit(self) -> None:
-        return None
-
-    def rollback(self) -> None:
-        return None
+from src.domain.value_objects.password import (
+    Password,
+)
 
 
 class RegisterUserUseCase:
     """
-    Use case responsible for registering a new user.
+    Registers a new user.
     """
 
     def __init__(
         self,
-        unit_of_work: UnitOfWork | None = None,
-        password_hasher: PasswordHasher | None = None,
-        user_repository=None,
+        unit_of_work: UnitOfWork,
+        password_hasher: PasswordHasher,
     ) -> None:
-        if unit_of_work is None:
-            if user_repository is None:
-                raise TypeError(
-                    "unit_of_work or user_repository must be provided."
-                )
-
-            unit_of_work = _RepositoryUnitOfWork(user_repository)
-
-        if password_hasher is None:
-            raise TypeError("password_hasher must be provided.")
-
-        self._uow = unit_of_work
+        self._unit_of_work = unit_of_work
         self._password_hasher = password_hasher
 
     def execute(
@@ -70,39 +113,70 @@ class RegisterUserUseCase:
     ) -> RegisterUserResponse:
         """
         Registers a new user.
+
+        Parameters
+        ----------
+        request:
+            Registration request.
+
+        Returns
+        -------
+        RegisterUserResponse
+            Newly created user.
+
+        Raises
+        ------
+        RequiredFieldError
+            If the name is empty.
+
+        PasswordMismatchError
+            If password confirmation does not match.
+
+        TermsNotAcceptedError
+            If the terms were not accepted.
+
+        EmailAlreadyExistsError
+            If another user already owns the same e-mail.
         """
 
         name = request.name.strip()
 
         if not name:
             raise RequiredFieldError(
-                "Name is required."
+                "Name is required.",
             )
 
-        email = Email(request.email)
-        password = Password(request.password)
+        email = Email(
+            request.email,
+        )
+
+        password = Password(
+            request.password,
+        )
 
         if request.password != request.confirm_password:
             raise PasswordMismatchError(
-                "Passwords do not match."
+                "Passwords do not match.",
             )
 
         if not request.accepted_terms:
             raise TermsNotAcceptedError(
-                "Terms must be accepted."
+                "Terms must be accepted.",
             )
 
-        with self._uow as uow:
+        with self._unit_of_work as uow:
 
-            if uow.users.exists_by_email(email):
+            if uow.users.exists_by_email(
+                email,
+            ):
                 raise EmailAlreadyExistsError(
-                    "Email already registered."
+                    "Email already registered.",
                 )
 
             hashed_password = HashedPassword(
                 self._password_hasher.hash(
-                    password.value
-                )
+                    password.value,
+                ),
             )
 
             user = User.create(
@@ -111,14 +185,16 @@ class RegisterUserUseCase:
                 password=hashed_password,
             )
 
-            uow.users.add(user)
+            uow.users.add(
+                user,
+            )
 
             uow.commit()
 
-        return RegisterUserResponse(
-            id=user.id,
-            name=user.name,
-            email=user.email.value,
-            email_verified=user.email_verified,
-            created_at=user.created_at,
-        )
+            return RegisterUserResponse(
+                id=user.id,
+                name=user.name,
+                email=user.email.value,
+                email_verified=user.email_verified,
+                created_at=user.created_at,
+            )

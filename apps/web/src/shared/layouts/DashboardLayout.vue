@@ -91,7 +91,7 @@
           </span>
 
           <RouterLink
-            to="/accounts"
+            to="/dashboard/accounts"
             class="menu-item"
           >
             <span class="menu-item__icon">🏦</span>

@@ -1,14 +1,10 @@
 from __future__ import annotations
-from src.domain.exceptions import (
-    InvalidEmailError,
-    PasswordMismatchError,
-    RequiredFieldError,
-    TermsNotAcceptedError,
-    EmailAlreadyExistsError,
-    InvalidPasswordError
-)
 
 import pytest
+
+from infrastructure.memory.in_memory_unit_of_work import (
+    InMemoryUnitOfWork,
+)
 
 from src.application.dto.auth.register_user_request import (
     RegisterUserRequest,
@@ -16,8 +12,13 @@ from src.application.dto.auth.register_user_request import (
 from src.application.use_cases.auth.register_user import (
     RegisterUserUseCase,
 )
-from src.infrastructure.persistence.memory.in_memory_user_repository import (
-    InMemoryUserRepository,
+from src.domain.exceptions import (
+    EmailAlreadyExistsError,
+    InvalidEmailError,
+    InvalidPasswordError,
+    PasswordMismatchError,
+    RequiredFieldError,
+    TermsNotAcceptedError,
 )
 from src.infrastructure.security.bcrypt_password_hasher import (
     BcryptPasswordHasher,
@@ -25,8 +26,12 @@ from src.infrastructure.security.bcrypt_password_hasher import (
 
 
 def create_use_case() -> RegisterUserUseCase:
+    """
+    Creates a RegisterUserUseCase backed by an in-memory Unit of Work.
+    """
+
     return RegisterUserUseCase(
-        user_repository=InMemoryUserRepository(),
+        unit_of_work=InMemoryUnitOfWork(),
         password_hasher=BcryptPasswordHasher(),
     )
 
@@ -34,6 +39,7 @@ def create_use_case() -> RegisterUserUseCase:
 def create_request(
     **kwargs,
 ) -> RegisterUserRequest:
+
     data = {
         "name": "Daniel Cunha",
         "email": "daniel@email.com",
@@ -74,10 +80,16 @@ def test_should_not_register_user_with_existing_email() -> None:
 
     request = create_request()
 
-    use_case.execute(request)
+    use_case.execute(
+        request,
+    )
 
-    with pytest.raises(EmailAlreadyExistsError):
-        use_case.execute(request)
+    with pytest.raises(
+        EmailAlreadyExistsError,
+    ):
+        use_case.execute(
+            request,
+        )
 
 
 def test_should_trim_name() -> None:
@@ -90,7 +102,7 @@ def test_should_trim_name() -> None:
     response = use_case.execute(
         create_request(
             name="   Daniel Cunha   ",
-        )
+        ),
     )
 
     assert response.name == "Daniel Cunha"
@@ -106,7 +118,7 @@ def test_should_normalize_email() -> None:
     response = use_case.execute(
         create_request(
             email="  Daniel@Email.Com  ",
-        )
+        ),
     )
 
     assert response.email == "daniel@email.com"
@@ -119,11 +131,13 @@ def test_should_not_register_without_name() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(RequiredFieldError):
+    with pytest.raises(
+        RequiredFieldError,
+    ):
         use_case.execute(
             create_request(
                 name="",
-            )
+            ),
         )
 
 
@@ -134,11 +148,13 @@ def test_should_not_register_without_email() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(InvalidEmailError):
+    with pytest.raises(
+        InvalidEmailError,
+    ):
         use_case.execute(
             create_request(
                 email="",
-            )
+            ),
         )
 
 
@@ -149,11 +165,13 @@ def test_should_not_register_without_password() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(InvalidPasswordError):
+    with pytest.raises(
+        InvalidPasswordError,
+    ):
         use_case.execute(
             create_request(
                 password="",
-            )
+            ),
         )
 
 
@@ -164,11 +182,13 @@ def test_should_not_register_when_passwords_do_not_match() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(PasswordMismatchError):
+    with pytest.raises(
+        PasswordMismatchError,
+    ):
         use_case.execute(
             create_request(
                 confirm_password="OutraSenha123",
-            )
+            ),
         )
 
 
@@ -179,9 +199,11 @@ def test_should_not_register_without_accepting_terms() -> None:
 
     use_case = create_use_case()
 
-    with pytest.raises(TermsNotAcceptedError):
+    with pytest.raises(
+        TermsNotAcceptedError,
+    ):
         use_case.execute(
             create_request(
                 accepted_terms=False,
-            )
+            ),
         )
