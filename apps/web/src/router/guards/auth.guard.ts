@@ -57,6 +57,17 @@ export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
     return true;
   }
 
+  const guestOnlyRoutes = ["login", "register"];
+
+  if (
+      auth.isAuthenticated &&
+      guestOnlyRoutes.includes(String(to.name))
+  ) {
+      return {
+          name: "dashboard",
+      };
+  }
+
   /**
    * Usuário autenticado pode acessar normalmente.
    */
