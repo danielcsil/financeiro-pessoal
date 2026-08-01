@@ -1,96 +1,134 @@
 <template>
-  <section class="auth-page">
-    <div class="auth-card">
+  <div class="register-view">
+    <header class="register-header">
       <h1>Criar conta</h1>
 
-      <p class="subtitle">
-        Preencha os dados abaixo para criar sua conta.
+      <p>
+        Bem-vindo ao Personal Finance.
+        <br />
+        Crie sua conta e comece a organizar sua vida financeira.
       </p>
+    </header>
 
-      <form @submit.prevent="onSubmit">
-        <div class="form-group">
-          <label for="name">Nome</label>
-
-          <input
-            id="name"
-            v-model="form.name"
-            type="text"
-            autocomplete="name"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="email">E-mail</label>
-
-          <input
-            id="email"
-            v-model="form.email"
-            type="email"
-            autocomplete="email"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Senha</label>
-
-          <input
-            id="password"
-            v-model="form.password"
-            type="password"
-            autocomplete="new-password"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="passwordConfirmation">
-            Confirmar senha
-          </label>
-
-          <input
-            id="passwordConfirmation"
-            v-model="form.passwordConfirmation"
-            type="password"
-            autocomplete="new-password"
-            required
-          />
-        </div>
-
-        <label class="checkbox">
-          <input
-            v-model="form.acceptTerms"
-            type="checkbox"
-          />
-
-          <span>
-            Li e aceito os termos de uso.
-          </span>
+    <form
+      class="register-form"
+      @submit.prevent="onSubmit"
+    >
+      <div class="form-group">
+        <label for="name">
+          Nome completo
         </label>
 
-        <button
-          type="submit"
-          class="btn-primary"
-          :disabled="loading"
-        >
-          {{ loading ? "Criando conta..." : "Criar conta" }}
-        </button>
-      </form>
+        <input
+          id="name"
+          v-model="form.name"
+          type="text"
+          placeholder="Digite seu nome"
+          autocomplete="name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">
+          E-mail
+        </label>
+
+        <input
+          id="email"
+          v-model="form.email"
+          type="email"
+          placeholder="seu@email.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">
+          Senha
+        </label>
+
+        <input
+          id="password"
+          v-model="form.password"
+          type="password"
+          placeholder="Crie uma senha"
+          autocomplete="new-password"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="passwordConfirmation">
+          Confirmar senha
+        </label>
+
+        <input
+          id="passwordConfirmation"
+          v-model="form.passwordConfirmation"
+          type="password"
+          placeholder="Repita sua senha"
+          autocomplete="new-password"
+          required
+        />
+      </div>
+
+      <label class="checkbox">
+        <input
+          v-model="form.acceptTerms"
+          type="checkbox"
+        />
+
+        <span>
+          Li e aceito os termos de uso.
+        </span>
+      </label>
+
+      <div
+        v-if="errorMessage"
+        class="error-message"
+      >
+        {{ errorMessage }}
+      </div>
+
+      <button
+        class="btn-primary"
+        type="submit"
+        :disabled="loading"
+      >
+        {{ loading ? "Criando conta..." : "Criar conta" }}
+      </button>
+    </form>
+
+    <div class="separator">
+      <span>ou</span>
     </div>
-  </section>
+
+    <footer class="register-footer">
+      <span>
+        Já possui uma conta?
+      </span>
+
+      <RouterLink to="/login">
+        Entrar
+      </RouterLink>
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
 import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 
 import { authService } from "@/modules/auth/services/auth.service";
 
 const router = useRouter();
 
 const loading = ref(false);
+
+const errorMessage = ref("");
 
 const form = reactive({
   name: "",
@@ -101,19 +139,27 @@ const form = reactive({
 });
 
 async function onSubmit(): Promise<void> {
+
+  errorMessage.value = "";
+
   if (form.password !== form.passwordConfirmation) {
-    alert("As senhas não coincidem.");
+    errorMessage.value =
+      "As senhas não coincidem.";
+
     return;
   }
 
   if (!form.acceptTerms) {
-    alert("É necessário aceitar os termos de uso.");
+    errorMessage.value =
+      "É necessário aceitar os termos de uso.";
+
     return;
   }
 
   loading.value = true;
 
   try {
+
     await authService.register({
       name: form.name,
       email: form.email,
@@ -122,95 +168,183 @@ async function onSubmit(): Promise<void> {
       acceptTerms: form.acceptTerms,
     });
 
-    alert("Conta criada com sucesso!");
+    await router.push({
+      path: "/login",
+      query: {
+        registered: "true",
+      },
+    });
 
-    form.name = "";
-    form.email = "";
-    form.password = "";
-    form.passwordConfirmation = "";
-    form.acceptTerms = false;
-
-    await router.push("/login");
   } catch (error: unknown) {
+
     if (axios.isAxiosError(error)) {
-      const message =
+
+      errorMessage.value =
         error.response?.data?.detail ??
         "Não foi possível criar a conta.";
 
-      alert(message);
     } else {
-      alert("Ocorreu um erro inesperado.");
+
+      errorMessage.value =
+        "Ocorreu um erro inesperado.";
+
     }
 
     console.error(error);
+
   } finally {
+
     loading.value = false;
+
   }
+
 }
 </script>
 
 <style scoped>
-.auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 80px);
-  padding: 2rem;
+.register-view{
+    display:flex;
+    flex-direction:column;
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 460px;
-  padding: 2rem;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+.register-header{
+    margin-bottom:32px;
 }
 
-.subtitle {
-  margin: 0.5rem 0 2rem;
-  color: #666;
+.register-header h1{
+    margin:0;
+    color:#14304d;
+    font-size:2rem;
+    font-weight:700;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
+.register-header p{
+    margin-top:10px;
+    color:#64748b;
+    line-height:1.6;
 }
 
-.form-group label {
-  margin-bottom: 0.4rem;
-  font-weight: 600;
+.register-form{
+    display:flex;
+    flex-direction:column;
 }
 
-.form-group input {
-  padding: 0.75rem;
-  border: 1px solid #d0d7de;
-  border-radius: 8px;
-  font-size: 1rem;
+.form-group{
+    margin-bottom:20px;
 }
 
-.checkbox {
-  display: flex;
-  gap: 0.5rem;
-  margin: 1rem 0 1.5rem;
-  align-items: flex-start;
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#334155;
 }
 
-.btn-primary {
-  width: 100%;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition:
-    opacity 0.2s ease,
-    background-color 0.2s ease;
+input{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid #dbe3ed;
+    border-radius:12px;
+    font-size:.95rem;
+    transition:border-color .2s,box-shadow .2s;
 }
 
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+input:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+
+.checkbox{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:24px;
+}
+
+.checkbox input{
+    width:18px;
+    height:18px;
+    margin-top:3px;
+}
+
+.checkbox span{
+    color:#475569;
+    line-height:1.5;
+}
+
+.error-message{
+    margin-bottom:22px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:#FEF2F2;
+    color:#B91C1C;
+    border:1px solid #FECACA;
+    font-size:.92rem;
+}
+
+.btn-primary{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+    color:white;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.btn-primary:hover:not(:disabled){
+    transform:translateY(-2px);
+    box-shadow:0 14px 26px rgba(37,99,235,.20);
+}
+
+.btn-primary:disabled{
+    opacity:.7;
+    cursor:not-allowed;
+}
+
+.separator{
+    display:flex;
+    align-items:center;
+    margin:34px 0 26px;
+}
+
+.separator::before,
+.separator::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#E5E7EB;
+}
+
+.separator span{
+    margin:0 18px;
+    color:#94A3B8;
+    font-size:.9rem;
+}
+
+.register-footer{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    color:#64748b;
+    font-size:.95rem;
+}
+
+.register-footer a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.register-footer a:hover{
+    text-decoration:underline;
 }
 </style>
