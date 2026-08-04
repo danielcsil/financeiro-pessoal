@@ -3,63 +3,7 @@
  * useFinancialAccounts
  * ============================================================================
  *
- * Purpose
- * ============================================================================
- *
- * Provides the reactive state and operations required by the Financial
- * Accounts module.
- *
- * This composable encapsulates every interaction between the UI and the
- * application service, exposing a simple API for Vue components.
- *
- * Views and components should never communicate directly with services.
- * Instead, they consume this composable.
- *
- * ============================================================================
- * Architecture
- * ============================================================================
- *
- * View
- *      │
- *      ▼
- * useFinancialAccounts
- *      │
- *      ▼
- * FinancialAccountService
- *      │
- *      ▼
- * FinancialAccountApi
- *      │
- *      ▼
- * REST API
- *
- * ============================================================================
- * Responsibilities
- * ============================================================================
- *
- * • Load accounts.
- *
- * • Create accounts.
- *
- * • Update accounts.
- *
- * • Maintain reactive state.
- *
- * • Expose loading indicators.
- *
- * • Expose error information.
- *
- * ============================================================================
- * Design Principles
- * ============================================================================
- *
- * • Reactive.
- *
- * • Stateless business logic.
- *
- * • UI independent.
- *
- * • Reusable across multiple views.
+ * Centraliza toda a lógica do módulo de Contas Financeiras.
  */
 
 import { computed, ref } from "vue";
@@ -72,145 +16,201 @@ import type {
     UpdateFinancialAccountRequest,
 } from "../types/financial-account";
 
-const accounts = ref<FinancialAccount[]>([]);
+export function useFinancialAccounts() {
 
-const loading = ref(false);
+    const accounts =
+        ref<FinancialAccount[]>([]);
 
-const error = ref<string | null>(null);
+    const loading =
+        ref(false);
 
-async function loadAccounts(): Promise<void> {
+    const saving =
+        ref(false);
 
-    loading.value = true;
+    const error =
+        ref<string | null>(null);
 
-    error.value = null;
+    const totalBalance = computed(() =>
 
-    try {
+        accounts.value.reduce(
 
-        accounts.value =
-            await financialAccountService.list();
+            (sum, account) =>
 
-    } catch (err) {
+                sum + account.currentBalance,
 
-        error.value =
-            err instanceof Error
-                ? err.message
-                : "Unable to load financial accounts.";
+            0,
 
-    } finally {
+        ),
 
-        loading.value = false;
+    );
 
-    }
+    const accountCount = computed(() =>
 
-}
+        accounts.value.length,
 
-async function createAccount(
-    request: CreateFinancialAccountRequest,
-): Promise<void> {
+    );
 
-    loading.value = true;
+    async function load() {
 
-    error.value = null;
+        loading.value = true;
 
-    try {
+        error.value = null;
 
-        const account =
-            await financialAccountService.create(
-                request,
-            );
+        try {
 
-        accounts.value.push(
-            account,
-        );
-
-        accounts.value.sort(
-            (a, b) => a.name.localeCompare(
-                b.name,
-            ),
-        );
-
-    } catch (err) {
-
-        error.value =
-            err instanceof Error
-                ? err.message
-                : "Unable to create financial account.";
-
-        throw err;
-
-    } finally {
-
-        loading.value = false;
-
-    }
-
-}
-
-async function updateAccount(
-    id: string,
-    request: UpdateFinancialAccountRequest,
-): Promise<void> {
-
-    loading.value = true;
-
-    error.value = null;
-
-    try {
-
-        const updated =
-            await financialAccountService.update(
-                id,
-                request,
-            );
-
-        const index =
-            accounts.value.findIndex(
-                account => account.id === id,
-            );
-
-        if (index >= 0) {
-
-            accounts.value[index] = updated;
-
-            accounts.value.sort(
-                (a, b) => a.name.localeCompare(
-                    b.name,
-                ),
-            );
+            accounts.value =
+                await financialAccountService.list();
 
         }
 
-    } catch (err) {
+        catch (err) {
 
-        error.value =
-            err instanceof Error
-                ? err.message
-                : "Unable to update financial account.";
+            console.error(err);
 
-        throw err;
+            error.value =
+                "Não foi possível carregar as contas.";
 
-    } finally {
+        }
 
-        loading.value = false;
+        finally {
+
+            loading.value = false;
+
+        }
 
     }
 
-}
+    async function create(
+        request: CreateFinancialAccountRequest,
+    ) {
 
-const totalAccounts = computed(
-    () => accounts.value.length,
-);
+        saving.value = true;
 
-const totalBalance = computed(
-    () =>
-        accounts.value.reduce(
-            (sum, account) =>
-                sum + account.currentBalance,
-            0,
-        ),
-);
+        error.value = null;
 
-export function useFinancialAccounts() {
+        try {
+
+            const account =
+                await financialAccountService.create(
+                    request,
+                );
+
+            accounts.value.push(
+                account,
+            );
+
+            sort();
+
+            return account;
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            error.value =
+                "Não foi possível criar a conta.";
+
+            throw err;
+
+        }
+
+        finally {
+
+            saving.value = false;
+
+        }
+
+    }
+
+    async function update(
+        id: string,
+        request: UpdateFinancialAccountRequest,
+    ) {
+
+        saving.value = true;
+
+        error.value = null;
+
+        try {
+
+            const updated =
+                await financialAccountService.update(
+                    id,
+                    request,
+                );
+
+            const index =
+                accounts.value.findIndex(
+
+                    account => account.id === id,
+
+                );
+
+            if (index >= 0) {
+
+                accounts.value[index] =
+                    updated;
+
+            }
+
+            sort();
+
+            return updated;
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            error.value =
+                "Não foi possível atualizar a conta.";
+
+            throw err;
+
+        }
+
+        finally {
+
+            saving.value = false;
+
+        }
+
+    }
+
+    function findById(
+        id: string,
+    ) {
+
+        return accounts.value.find(
+
+            account => account.id === id,
+
+        );
+
+    }
+
+    function sort() {
+
+        accounts.value.sort(
+
+            (a, b) =>
+
+                a.name.localeCompare(
+                    b.name,
+                ),
+
+        );
+
+    }
+
+    function clearError() {
+
+        error.value = null;
+
+    }
 
     return {
 
@@ -218,17 +218,23 @@ export function useFinancialAccounts() {
 
         loading,
 
+        saving,
+
         error,
 
-        totalAccounts,
+        accountCount,
 
         totalBalance,
 
-        loadAccounts,
+        load,
 
-        createAccount,
+        create,
 
-        updateAccount,
+        update,
+
+        findById,
+
+        clearError,
 
     };
 

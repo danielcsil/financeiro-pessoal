@@ -91,6 +91,6 @@ def dashboard(
     """
 
     return {
-        "user_id": str(current_user.user_id),
+        "user_id": str(current_user.id),
         "message": "Dashboard endpoint available.",
     }

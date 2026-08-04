@@ -1,262 +1,346 @@
+<template>
+
+    <section class="financial-accounts-view">
+
+        <!-- ==========================================================
+             Header
+        =========================================================== -->
+
+        <header class="page-header">
+
+            <div class="page-header__content">
+
+                <h1>
+
+                    Contas Financeiras
+
+                </h1>
+
+                <p>
+
+                    Gerencie todas as suas contas bancárias,
+                    investimentos, carteiras e demais ativos
+                    financeiros em um único lugar.
+
+                </p>
+
+            </div>
+
+            <AppButton
+                size="lg"
+                @click="openCreateModal"
+            >
+
+                + Nova Conta
+
+            </AppButton>
+
+        </header>
+
+        <!-- ==========================================================
+             Summary
+        =========================================================== -->
+
+        <FinancialAccountSummary
+            :accounts="store.accounts"
+        />
+
+        <!-- ==========================================================
+             Toolbar
+        =========================================================== -->
+
+        <FinancialAccountToolbar
+            @filter="store.setFilters"
+        />
+
+        <!-- ==========================================================
+             Loading
+        =========================================================== -->
+
+        <div
+            v-if="store.loading"
+            class="loading-container"
+        >
+
+            Carregando contas...
+
+        </div>
+
+        <!-- ==========================================================
+             Table
+        =========================================================== -->
+
+        <FinancialAccountTable
+
+            v-else
+
+            :accounts="store.paginatedAccounts"
+
+            @view="viewAccount"
+
+            @edit="editAccount"
+
+            @delete="deleteAccount"
+
+        />
+
+        <!-- ==========================================================
+             Pagination
+        =========================================================== -->
+
+        <AppPagination
+
+            v-if="store.filteredAccounts.length"
+
+            v-model:current-page="currentPage"
+
+            v-model:page-size="pageSize"
+
+            :total-items="store.filteredAccounts.length"
+
+        />
+
+        <!-- ==========================================================
+             Modal
+        =========================================================== -->
+
+        <FinancialAccountModal
+
+            v-model="showModal"
+
+            :loading="store.saving"
+
+            @save="createAccount"
+
+        />
+
+    </section>
+
+</template>
+
 <script setup lang="ts">
+
 /**
- * =============================================================================
+ * ============================================================================
  * Financial Accounts View
- * =============================================================================
+ * ============================================================================
  *
- * Purpose
- * =============================================================================
+ * Main page responsible for composing the Financial Accounts module.
  *
- * Main screen responsible for managing the user's financial accounts.
+ * This component intentionally contains almost no business logic.
  *
- * This component orchestrates the interaction between the UI and the
- * application layer.
- *
- * Responsibilities
- * ----------------
- *
- * • Load financial accounts.
- * • Display the account list.
- * • Open and close the account form.
- * • Create accounts.
- * • Edit accounts.
- *
- * No HTTP communication happens here.
+ * All module state is centralized inside the Pinia Store.
  */
 
-import { computed, onMounted, ref } from "vue";
+import {
 
-import BaseButton from "@/shared/components/base/BaseButton.vue";
-import BaseModal from "@/shared/components/base/BaseModal.vue";
+    onMounted,
 
-import FinancialAccountForm
-    from "../components/FinancialAccountForm.vue";
+    ref,
 
-import FinancialAccountsList
-    from "../components/FinancialAccountsList.vue";
+} from "vue";
 
-import { useFinancialAccounts }
-    from "../composables/useFinancialAccounts";
+import {
+
+    storeToRefs,
+
+} from "pinia";
+
+import AppButton
+from "@/shared/components/AppButton.vue";
+
+import AppPagination
+from "@/shared/components/AppPagination.vue";
+
+import FinancialAccountSummary
+from "../components/FinancialAccountSummary.vue";
+
+import FinancialAccountToolbar
+from "../components/FinancialAccountToolbar.vue";
+
+import FinancialAccountTable
+from "../components/FinancialAccountTable.vue";
+
+import FinancialAccountModal
+from "../components/FinancialAccountModal.vue";
+
+import {
+
+    useFinancialAccountStore,
+
+} from "../stores/financial-account.store";
 
 import type {
+
     CreateFinancialAccountRequest,
+
     FinancialAccount,
-    UpdateFinancialAccountRequest,
+
 } from "../types/financial-account";
 
+const store =
+    useFinancialAccountStore();
+
 const {
-    accounts,
-    loading,
-    error,
-    loadAccounts,
-    createAccount,
-    updateAccount,
-    totalAccounts,
-    totalBalance,
-} = useFinancialAccounts();
 
-const modalOpen = ref(false);
+    currentPage,
 
-const selectedAccount =
-    ref<FinancialAccount>();
+    pageSize,
 
-const editing = computed(
-    () => selectedAccount.value !== undefined,
+} = storeToRefs(store);
+
+const showModal =
+    ref(false);
+
+/* ==========================================================================
+   Lifecycle
+========================================================================== */
+
+onMounted(
+
+    store.load,
+
 );
 
-/**
- * Loads accounts when the page opens.
- */
-onMounted(async () => {
+/* ==========================================================================
+   Modal
+========================================================================== */
 
-    await loadAccounts();
+function openCreateModal(): void {
 
-});
-
-/**
- * Opens the creation modal.
- */
-function newAccount(): void {
-
-    selectedAccount.value = undefined;
-
-    modalOpen.value = true;
+    showModal.value = true;
 
 }
 
-/**
- * Opens the edition modal.
- */
-function editAccount(
-    account: FinancialAccount,
-): void {
+function closeCreateModal(): void {
 
-    selectedAccount.value = account;
-
-    modalOpen.value = true;
+    showModal.value = false;
 
 }
 
-/**
- * Closes the modal.
- */
-function closeModal(): void {
+/* ==========================================================================
+   Create
+========================================================================== */
 
-    modalOpen.value = false;
+async function createAccount(
 
-    selectedAccount.value = undefined;
+    request: CreateFinancialAccountRequest,
 
-}
-
-/**
- * Persists the account.
- */
-async function saveAccount(
-    request:
-        | CreateFinancialAccountRequest
-        | UpdateFinancialAccountRequest,
 ): Promise<void> {
 
-    if (editing.value) {
+    try {
 
-        await updateAccount(
-            selectedAccount.value!.id,
-            request as UpdateFinancialAccountRequest,
+        await store.create(
+
+            request,
+
         );
 
-    } else {
+        closeCreateModal();
 
-        await createAccount(
-            request as CreateFinancialAccountRequest,
+    }
+
+    catch (error) {
+
+        console.error(
+
+            "Unable to create financial account.",
+
+            error,
+
         );
 
     }
 
-    closeModal();
+}
+
+/* ==========================================================================
+   View
+========================================================================== */
+
+function viewAccount(
+
+    account: FinancialAccount,
+
+): void {
+
+    store.selectAccount(
+
+        account,
+
+    );
+
+    console.log(
+
+        "View account:",
+
+        account,
+
+    );
 
 }
+
+/* ==========================================================================
+   Edit
+========================================================================== */
+
+function editAccount(
+
+    account: FinancialAccount,
+
+): void {
+
+    store.selectAccount(
+
+        account,
+
+    );
+
+    console.log(
+
+        "Edit account:",
+
+        account,
+
+    );
+
+}
+
+/* ==========================================================================
+   Delete
+========================================================================== */
+
+function deleteAccount(
+
+    account: FinancialAccount,
+
+): void {
+
+    store.selectAccount(
+
+        account,
+
+    );
+
+    console.log(
+
+        "Delete account:",
+
+        account,
+
+    );
+
+}
+
 </script>
-
-<template>
-
-<section class="financial-accounts">
-
-    <header class="page-header">
-
-        <div>
-
-            <h1>
-
-                Financial Accounts
-
-            </h1>
-
-            <p>
-
-                Manage all accounts used in your financial planning.
-
-            </p>
-
-        </div>
-
-        <BaseButton
-            @click="newAccount"
-        >
-
-            New Account
-
-        </BaseButton>
-
-    </header>
-
-    <section class="summary">
-
-        <article class="summary-card">
-
-            <strong>
-
-                {{ totalAccounts }}
-
-            </strong>
-
-            <span>
-
-                Accounts
-
-            </span>
-
-        </article>
-
-        <article class="summary-card">
-
-            <strong>
-
-                {{ totalBalance }}
-
-            </strong>
-
-            <span>
-
-                Total Balance
-
-            </span>
-
-        </article>
-
-    </section>
-
-    <div
-        v-if="error"
-        class="error"
-    >
-
-        {{ error }}
-
-    </div>
-
-    <FinancialAccountsList
-        :accounts="accounts"
-        :loading="loading"
-        @create="newAccount"
-        @edit="editAccount"
-    />
-
-    <BaseModal
-        :open="modalOpen"
-        width="700px"
-        @close="closeModal"
-    >
-
-        <template #header>
-
-            <h2>
-
-                {{
-                    editing
-                        ? "Edit Account"
-                        : "New Financial Account"
-                }}
-
-            </h2>
-
-        </template>
-
-        <FinancialAccountForm
-            :account="selectedAccount"
-            :submitting="loading"
-            @submit="saveAccount"
-            @cancel="closeModal"
-        />
-
-    </BaseModal>
-
-</section>
-
-</template>
 
 <style scoped>
 
-.financial-accounts{
+/* ==========================================================================
+   Layout
+========================================================================== */
+
+.financial-accounts-view{
 
     display:flex;
 
@@ -264,7 +348,19 @@ async function saveAccount(
 
     gap:2rem;
 
+    width:100%;
+
+    padding:2rem;
+
+    background:#f8fafc;
+
+    min-height:100%;
+
 }
+
+/* ==========================================================================
+   Header
+========================================================================== */
 
 .page-header{
 
@@ -272,7 +368,19 @@ async function saveAccount(
 
     justify-content:space-between;
 
-    align-items:center;
+    align-items:flex-start;
+
+    gap:2rem;
+
+}
+
+.page-header__content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:.65rem;
 
 }
 
@@ -280,61 +388,207 @@ async function saveAccount(
 
     margin:0;
 
+    color:#0f172a;
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    letter-spacing:-.02em;
+
 }
 
 .page-header p{
 
-    margin-top:.35rem;
+    margin:0;
 
-    color:var(--color-text-secondary);
+    max-width:760px;
 
-}
+    color:#64748b;
 
-.summary{
+    line-height:1.7;
 
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
-    gap:1rem;
+    font-size:.98rem;
 
 }
 
-.summary-card{
+/* ==========================================================================
+   Loading
+========================================================================== */
 
-    background:var(--color-surface);
-
-    border:1px solid var(--color-border);
-
-    border-radius:1rem;
-
-    padding:1.5rem;
+.loading-container{
 
     display:flex;
 
-    flex-direction:column;
+    justify-content:center;
 
-    gap:.5rem;
+    align-items:center;
+
+    min-height:320px;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:18px;
+
+    background:#ffffff;
+
+    color:#64748b;
+
+    box-shadow:
+
+        0 10px 24px rgba(15,23,42,.04);
 
 }
 
-.summary-card strong{
+/* ==========================================================================
+   Component spacing
+========================================================================== */
 
-    font-size:2rem;
+.financial-accounts-view > *{
 
-    color:var(--color-primary);
+    width:100%;
 
 }
 
-.error{
+:deep(.financial-account-summary){
 
-    padding:1rem;
+    transition:.25s;
 
-    border-radius:.75rem;
+}
 
-    background:#fee2e2;
+:deep(.financial-account-toolbar){
 
-    color:#991b1b;
+    transition:.25s;
+
+}
+
+:deep(.financial-account-table){
+
+    transition:.25s;
+
+}
+
+:deep(.app-pagination){
+
+    margin-top:.5rem;
+
+}
+
+/* ==========================================================================
+   Animation
+========================================================================== */
+
+.financial-accounts-view > *{
+
+    animation:
+
+        fadeIn .25s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================================================
+   Responsive
+========================================================================== */
+
+@media(max-width:1280px){
+
+    .financial-accounts-view{
+
+        padding:1.5rem;
+
+        gap:1.75rem;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .financial-accounts-view{
+
+        padding:1.25rem;
+
+        gap:1.5rem;
+
+    }
+
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:1.5rem;
+
+    }
+
+    .page-header :deep(button){
+
+        width:100%;
+
+    }
+
+    .page-header h1{
+
+        font-size:1.8rem;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .financial-accounts-view{
+
+        padding:1rem;
+
+        gap:1.25rem;
+
+    }
+
+    .page-header h1{
+
+        font-size:1.55rem;
+
+    }
+
+    .page-header p{
+
+        font-size:.92rem;
+
+        max-width:100%;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .financial-accounts-view{
+
+        padding:.75rem;
+
+    }
 
 }
 

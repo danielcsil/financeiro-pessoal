@@ -44,75 +44,94 @@
  * Represents a financial account.
  */
 export interface FinancialAccount {
-  /**
-   * Unique account identifier.
-   */
-  readonly id: string;
 
-  /**
-   * Account owner identifier.
-   */
-  readonly userId: string;
+    /**
+     * Unique account identifier.
+     */
+    readonly id: string;
 
-  /**
-   * Account name.
-   */
-  name: string;
+    /**
+     * Account owner identifier.
+     */
+    readonly userId: string;
 
-  /**
-   * Financial institution.
-   */
-  institution: string | null;
+    /**
+     * Account name.
+     */
+    name: string;
 
-  /**
-   * Account type.
-   */
-  accountType: AccountType;
+    /**
+     * Financial institution.
+     */
+    institution: string | null;
 
-  /**
-   * Initial account balance.
-   */
-  initialBalance: number;
+    /**
+     * Account type.
+     */
+    accountType: AccountType;
 
-  /**
-   * Current account balance.
-   */
-  currentBalance: number;
+    /**
+     * Initial account balance.
+     */
+    initialBalance: number;
 
-  /**
-   * Color used throughout the UI.
-   */
-  color: string;
+    /**
+     * Current account balance.
+     */
+    currentBalance: number;
 
-  /**
-   * Icon identifier.
-   */
-  icon: string;
+    /**
+     * Color used throughout the UI.
+     */
+    color: string;
 
-  /**
-   * Indicates whether the account participates in cash flow calculations.
-   */
-  includeInCashFlow: boolean;
+    /**
+     * Icon identifier.
+     */
+    icon: string;
 
-  /**
-   * Indicates whether the account contributes to the user's net worth.
-   */
-  includeInNetWorth: boolean;
+    /**
+     * Indicates whether the account participates in cash flow calculations.
+     */
+    includeInCashFlow: boolean;
 
-  /**
-   * Indicates whether the account is active.
-   */
-  active: boolean;
+    /**
+     * Indicates whether the account contributes to the user's net worth.
+     */
+    includeInNetWorth: boolean;
 
-  /**
-   * Account creation timestamp.
-   */
-  createdAt: string;
+    /**
+     * Indicates whether the account is active.
+     */
+    active: boolean;
 
-  /**
-   * Last update timestamp.
-   */
-  updatedAt: string;
+    /**
+     * Account creation timestamp.
+     */
+    createdAt: string;
+
+    /**
+     * Last update timestamp.
+     */
+    updatedAt: string;
+
+}
+
+/**
+ * Response returned by GET /financial-accounts.
+ */
+export interface ListFinancialAccountsResponse {
+
+    /**
+     * Financial accounts belonging to the authenticated user.
+     */
+    items: FinancialAccount[];
+
+    /**
+     * Total number of accounts.
+     */
+    total: number;
+
 }
 
 /**
@@ -121,50 +140,61 @@ export interface FinancialAccount {
  * This enum mirrors the values exposed by the backend.
  */
 export enum AccountType {
-  CHECKING = "CHECKING",
-  SAVINGS = "SAVINGS",
-  INVESTMENT = "INVESTMENT",
-  CASH = "CASH",
-  DIGITAL_WALLET = "DIGITAL_WALLET",
-  OTHER = "OTHER",
+
+    CHECKING = "CHECKING",
+
+    SAVINGS = "SAVINGS",
+
+    INVESTMENT = "INVESTMENT",
+
+    CASH = "CASH",
+
+    DIGITAL_WALLET = "DIGITAL_WALLET",
+
+    OTHER = "OTHER",
+
 }
 
 /**
  * Payload used to create a new financial account.
  */
 export interface CreateFinancialAccountRequest {
-  name: string;
 
-  institution: string | null;
+    name: string;
 
-  accountType: AccountType;
+    institution: string;
 
-  initialBalance: number;
+    accountType: AccountType;
 
-  color: string;
+    initialBalance: number;
 
-  icon: string;
+    color: string;
 
-  includeInCashFlow: boolean;
+    icon: string;
 
-  includeInNetWorth: boolean;
+    includeInCashFlow: boolean;
+
+    includeInNetWorth: boolean;
+
 }
 
 /**
  * Payload used to update an existing financial account.
  */
 export interface UpdateFinancialAccountRequest {
-  name: string;
 
-  institution: string | null;
+    name: string;
 
-  accountType: AccountType;
+    institution: string;
 
-  color: string;
+    accountType: AccountType;
 
-  icon: string;
+    color: string;
 
-  includeInCashFlow: boolean;
+    icon: string;
 
-  includeInNetWorth: boolean;
+    includeInCashFlow: boolean;
+
+    includeInNetWorth: boolean;
+
 }

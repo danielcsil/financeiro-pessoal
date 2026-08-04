@@ -1,308 +1,322 @@
+<template>
+
+    <form
+        class="account-form"
+        @submit.prevent="submit"
+    >
+
+        <!-- ==========================================================
+             General Information
+        =========================================================== -->
+
+        <FinancialAccountSection
+            title="Informações Gerais"
+            description="Defina as informações principais da conta financeira."
+        >
+
+            <div class="grid grid-2">
+
+                <AppInput
+                    v-model="form.name"
+                    label="Nome da Conta"
+                    placeholder="Ex.: Nubank"
+                    required
+                />
+
+                <AppInput
+                    v-model="form.institution"
+                    label="Instituição"
+                    placeholder="Ex.: Itaú, Nubank..."
+                />
+
+            </div>
+
+            <AccountTypeSelector
+                v-model="form.accountType"
+            />
+
+        </FinancialAccountSection>
+
+        <FinancialAccountDivider />
+
+        <!-- ==========================================================
+             Appearance
+        =========================================================== -->
+
+        <FinancialAccountSection
+            title="Aparência"
+            description="Personalize a identificação visual da conta."
+        >
+
+            <div class="grid grid-2">
+
+                <ColorPicker
+                    v-model="form.color"
+                />
+
+                <IconPicker
+                    v-model="form.icon"
+                />
+
+            </div>
+
+        </FinancialAccountSection>
+
+        <FinancialAccountDivider />
+
+        <!-- ==========================================================
+             Initial Balance
+        =========================================================== -->
+
+        <FinancialAccountSection
+            title="Saldo Inicial"
+            description="Informe o saldo disponível nesta conta."
+        >
+
+            <CurrencyInput
+                v-model="form.initialBalance"
+            />
+
+        </FinancialAccountSection>
+
+        <FinancialAccountDivider />
+
+        <!-- ==========================================================
+             Participation
+        =========================================================== -->
+
+        <FinancialAccountSection
+            title="Participação"
+            description="Escolha como esta conta participa dos cálculos do sistema."
+        >
+
+            <div class="switches">
+
+                <AppSwitch
+                    v-model="form.includeInCashFlow"
+                    label="Fluxo de Caixa"
+                    description="Inclui esta conta nos cálculos de fluxo de caixa."
+                />
+
+                <AppSwitch
+                    v-model="form.includeInNetWorth"
+                    label="Patrimônio"
+                    description="Inclui esta conta no patrimônio líquido."
+                />
+
+            </div>
+
+        </FinancialAccountSection>
+
+        <!-- ==========================================================
+             Footer
+        =========================================================== -->
+
+        <footer class="footer">
+
+            <AppButton
+                variant="secondary"
+                type="button"
+                @click="cancel"
+            >
+
+                Cancelar
+
+            </AppButton>
+
+            <AppButton
+                type="submit"
+                :loading="loading"
+            >
+
+                Criar Conta
+
+            </AppButton>
+
+        </footer>
+
+    </form>
+
+</template>
+
 <script setup lang="ts">
+
 /**
- * =============================================================================
+ * ============================================================================
  * Financial Account Form
- * =============================================================================
+ * ============================================================================
  *
  * Purpose
- * =============================================================================
+ * ============================================================================
  *
- * Reusable form responsible for creating and editing financial accounts.
+ * Form responsible for collecting the information required to create a
+ * Financial Account.
  *
- * This component is intentionally presentation-oriented and delegates every
- * persistence operation to its parent component.
- *
- * Responsibilities
- * ----------------
- *
- * • Display financial account fields.
- *
- * • Populate the form during edition.
- *
- * • Reset the form during creation.
- *
- * • Validate basic required fields.
- *
- * • Emit submit and cancel events.
- *
- * No HTTP requests or business rules belong here.
+ * This component contains only presentation logic and validation.
+ * Persistence is delegated to the parent component.
  */
 
-import { computed, reactive, watch } from "vue";
+import { reactive } from "vue";
+
+import AppButton
+from "@/shared/components/AppButton.vue";
+
+import AppInput
+from "@/shared/components/AppInput.vue";
+
+import AppSwitch
+from "@/shared/components/AppSwitch.vue";
+
+import AccountTypeSelector
+from "./AccountTypeSelector.vue";
+
+import ColorPicker
+from "./ColorPicker.vue";
+
+import CurrencyInput
+from "./CurrencyInput.vue";
+
+import FinancialAccountDivider
+from "./FinancialAccountDivider.vue";
+
+import FinancialAccountSection
+from "./FinancialAccountSection.vue";
+
+import IconPicker
+from "./IconPicker.vue";
 
 import {
-    BaseButton,
-    BaseInput,
-} from "@/shared/components/base";
 
-import BaseCheckbox from "@/shared/components/base/BaseCheckbox.vue";
-
-import BaseSelect from "@/shared/components/base/BaseSelect.vue";
-
-import {
     AccountType,
-    type CreateFinancialAccountRequest,
-    type FinancialAccount,
+
 } from "../types/financial-account";
 
-interface Props {
+import type {
 
-    /**
-     * Existing account when editing.
-     */
-    account?: FinancialAccount;
+    CreateFinancialAccountRequest,
 
-    /**
-     * Indicates whether the form is currently submitting.
-     */
-    submitting?: boolean;
-
-}
+} from "../types/financial-account";
 
 const props = withDefaults(
-    defineProps<Props>(),
+
+    defineProps<{
+
+        loading?: boolean;
+
+    }>(),
+
     {
-        submitting: false,
+
+        loading: false,
+
     },
+
 );
 
 const emit = defineEmits<{
 
-    submit: [request: CreateFinancialAccountRequest];
+    (
 
-    cancel: [];
+        event: "submit",
+
+        request: CreateFinancialAccountRequest,
+
+    ): void;
+
+    (
+
+        event: "cancel",
+
+    ): void;
 
 }>();
 
-const defaultForm = (): CreateFinancialAccountRequest => ({
+const form = reactive<CreateFinancialAccountRequest>({
+
     name: "",
-    institution: null,
+
+    institution: "",
+
     accountType: AccountType.CHECKING,
+
     initialBalance: 0,
+
     color: "#2563EB",
+
     icon: "wallet",
+
     includeInCashFlow: true,
+
     includeInNetWorth: true,
+
 });
 
-const form = reactive<CreateFinancialAccountRequest>(
-    defaultForm(),
-);
+function submit(): void {
 
-const institutionValue = computed<string>({
-    get: () => form.institution ?? "",
-    set: value => {
-        form.institution = value.trim() === ""
-            ? null
-            : value;
-    },
-});
+    if (
 
-const accountTypeValue = computed<string>({
-    get: () => form.accountType,
-    set: value => {
-        form.accountType = value as AccountType;
-    },
-});
+        form.name.trim() === ""
 
-const initialBalanceValue = computed<string>({
-    get: () => String(form.initialBalance),
-    set: value => {
-        const parsed = Number(value);
+    ) {
 
-        form.initialBalance = Number.isFinite(parsed)
-            ? parsed
-            : 0;
-    },
-});
+        return;
 
-/**
- * Synchronizes the form with the selected account.
- */
-watch(
-    () => props.account,
-    account => {
-
-        if (!account) {
-
-            Object.assign(
-                form,
-                defaultForm(),
-            );
-
-            return;
-
-        }
-
-        Object.assign(
-            form,
-            {
-                name: account.name,
-                institution: account.institution,
-                accountType: account.accountType,
-                initialBalance: account.initialBalance,
-                color: account.color,
-                icon: account.icon,
-                includeInCashFlow:
-                    account.includeInCashFlow,
-                includeInNetWorth:
-                    account.includeInNetWorth,
-            },
-        );
-
-    },
-    {
-        immediate: true,
-    },
-);
-
-const accountTypes = computed(() => [
-
-    {
-        value: AccountType.CHECKING,
-        label: "Checking Account",
-    },
-
-    {
-        value: AccountType.SAVINGS,
-        label: "Savings Account",
-    },
-
-    {
-        value: AccountType.INVESTMENT,
-        label: "Investment Account",
-    },
-
-    {
-        value: AccountType.CASH,
-        label: "Cash",
-    },
-
-    {
-        value: AccountType.DIGITAL_WALLET,
-        label: "Digital Wallet",
-    },
-
-    {
-        value: AccountType.OTHER,
-        label: "Other",
-    },
-
-]);
-
-function onSubmit(): void {
+    }
 
     emit(
+
         "submit",
+
         {
+
             ...form,
+
         },
+
     );
 
 }
+
+function cancel(): void {
+
+    emit(
+
+        "cancel",
+
+    );
+
+}
+
+function resetForm(): void {
+
+    form.name = "";
+
+    form.institution = "";
+
+    form.accountType =
+        AccountType.CHECKING;
+
+    form.initialBalance = 0;
+
+    form.color = "#2563EB";
+
+    form.icon = "wallet";
+
+    form.includeInCashFlow = true;
+
+    form.includeInNetWorth = true;
+
+}
+
 </script>
-
-<template>
-
-<form
-    class="financial-account-form"
-    @submit.prevent="onSubmit"
->
-
-    <div class="grid">
-
-        <BaseInput
-            id="name"
-            v-model="form.name"
-            label="Account Name"
-            placeholder="Checking Account"
-            required
-        />
-
-        <BaseInput
-            id="institution"
-            v-model="institutionValue"
-            label="Institution"
-            placeholder="Bank"
-        />
-
-        <BaseSelect
-            id="account-type"
-            v-model="accountTypeValue"
-            label="Account Type"
-            :options="accountTypes"
-            required
-        />
-
-        <BaseInput
-            id="initial-balance"
-            v-model="initialBalanceValue"
-            type="number"
-            label="Initial Balance"
-        />
-
-        <BaseInput
-            id="color"
-            v-model="form.color"
-            type="color"
-            label="Color"
-        />
-
-        <BaseInput
-            id="icon"
-            v-model="form.icon"
-            label="Icon"
-            placeholder="wallet"
-        />
-
-    </div>
-
-    <div class="checkboxes">
-
-        <BaseCheckbox
-            v-model="form.includeInCashFlow"
-            label="Include in Cash Flow"
-            description="This account participates in cash flow calculations."
-        />
-
-        <BaseCheckbox
-            v-model="form.includeInNetWorth"
-            label="Include in Net Worth"
-            description="This account contributes to total net worth."
-        />
-
-    </div>
-
-    <footer class="actions">
-
-        <BaseButton
-            variant="secondary"
-            type="button"
-            @click="emit('cancel')"
-        >
-            Cancel
-        </BaseButton>
-
-        <BaseButton
-            type="submit"
-            :loading="submitting"
-        >
-            {{
-                account
-                    ? "Save Changes"
-                    : "Create Account"
-            }}
-        </BaseButton>
-
-    </footer>
-
-</form>
-
-</template>
 
 <style scoped>
 
-.financial-account-form{
+/* ==========================================================================
+   Form
+========================================================================== */
+
+.account-form{
 
     display:flex;
 
@@ -310,19 +324,41 @@ function onSubmit(): void {
 
     gap:2rem;
 
+    width:100%;
+
 }
+
+/* ==========================================================================
+   Grid
+========================================================================== */
 
 .grid{
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-
     gap:1.5rem;
 
 }
 
-.checkboxes{
+.grid-2{
+
+    grid-template-columns:
+
+        repeat(
+
+            2,
+
+            minmax(0,1fr)
+
+        );
+
+}
+
+/* ==========================================================================
+   Switches
+========================================================================== */
+
+.switches{
 
     display:flex;
 
@@ -332,29 +368,235 @@ function onSubmit(): void {
 
 }
 
-.actions{
+/* ==========================================================================
+   Footer
+========================================================================== */
+
+.footer{
 
     display:flex;
 
     justify-content:flex-end;
 
+    align-items:center;
+
     gap:1rem;
+
+    margin-top:.5rem;
 
     padding-top:1.5rem;
 
-    border-top:1px solid var(--color-border);
+    border-top:1px solid #e2e8f0;
 
 }
 
-@media (max-width:768px){
+/* ==========================================================================
+   Buttons
+========================================================================== */
 
-    .actions{
+.footer :deep(button){
+
+    min-width:160px;
+
+}
+
+/* ==========================================================================
+   Inputs
+========================================================================== */
+
+.account-form :deep(.app-input),
+
+.account-form :deep(.app-select),
+
+.account-form :deep(.currency-input){
+
+    width:100%;
+
+}
+
+/* ==========================================================================
+   Sections
+========================================================================== */
+
+.account-form :deep(.section){
+
+    gap:1.75rem;
+
+}
+
+.account-form :deep(.section h3){
+
+    color:#0f172a;
+
+}
+
+.account-form :deep(.section p){
+
+    color:#64748b;
+
+}
+
+/* ==========================================================================
+   Divider
+========================================================================== */
+
+.account-form :deep(hr){
+
+    margin:0;
+
+}
+
+/* ==========================================================================
+   Animations
+========================================================================== */
+
+.account-form>*{
+
+    animation:
+
+        fadeIn .20s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(4px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================================================
+   Responsive
+========================================================================== */
+
+@media(max-width:992px){
+
+    .grid-2{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .account-form{
+
+        gap:1.5rem;
+
+    }
+
+    .footer{
 
         flex-direction:column-reverse;
 
         align-items:stretch;
 
     }
+
+    .footer :deep(button){
+
+        width:100%;
+
+    }
+
+}
+
+/* ==========================================================================
+   Visual Refinements
+========================================================================== */
+
+.account-form{
+
+    padding:.25rem 0;
+
+}
+
+.footer{
+
+    position:sticky;
+
+    bottom:0;
+
+    background:white;
+
+}
+
+.footer::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-1px;
+
+    left:0;
+
+    right:0;
+
+}
+
+.account-form :deep(.section){
+
+    transition:.2s ease;
+
+}
+
+.account-form :deep(.section:hover){
+
+    transform:translateY(-1px);
+
+}
+
+.account-form :deep(.app-switch){
+
+    padding:.35rem 0;
+
+}
+
+/* ==========================================================================
+   Focus
+========================================================================== */
+
+.account-form :deep(input:focus),
+
+.account-form :deep(select:focus),
+
+.account-form :deep(textarea:focus){
+
+    transition:
+
+        border-color .2s,
+
+        box-shadow .2s;
+
+}
+
+/* ==========================================================================
+   Accessibility
+========================================================================== */
+
+.account-form :deep(button:focus-visible),
+
+.account-form :deep(input:focus-visible),
+
+.account-form :deep(select:focus-visible){
+
+    outline:none;
 
 }
 

@@ -1,316 +1,329 @@
+<template>
+
+    <article
+        class="account-card"
+        @click="$emit('details', account)"
+    >
+
+        <!-- ====================================================== -->
+        <!-- Header -->
+        <!-- ====================================================== -->
+
+        <header class="header">
+
+            <div
+                class="icon"
+                :style="{ backgroundColor: account.color }"
+            >
+                {{ icon }}
+            </div>
+
+            <button
+                class="menu-button"
+                @click.stop="$emit('menu', account)"
+            >
+                ⋮
+            </button>
+
+        </header>
+
+        <!-- ====================================================== -->
+        <!-- Body -->
+        <!-- ====================================================== -->
+
+        <div class="body">
+
+            <h3>
+                {{ account.name }}
+            </h3>
+
+            <p
+                v-if="account.institution"
+                class="institution"
+            >
+                {{ account.institution }}
+            </p>
+
+            <div class="balance">
+
+                {{ formatCurrency(account.currentBalance) }}
+
+            </div>
+
+        </div>
+
+        <!-- ====================================================== -->
+        <!-- Footer -->
+        <!-- ====================================================== -->
+
+        <footer class="footer">
+
+            <span
+                class="badge"
+                v-if="account.includeInCashFlow"
+            >
+                Fluxo de Caixa
+            </span>
+
+            <span
+                class="badge secondary"
+                v-if="account.includeInNetWorth"
+            >
+                Patrimônio
+            </span>
+
+        </footer>
+
+    </article>
+
+</template>
+
 <script setup lang="ts">
+
 import { computed } from "vue";
 
-import type { FinancialAccount } from "../types/financial-account";
+import type {
+    FinancialAccount,
+} from "../types/financial-account";
 
-interface Props {
-  account: FinancialAccount;
-}
+const props = defineProps<{
 
-const props = defineProps<Props>();
+    account: FinancialAccount;
 
-const emit = defineEmits<{
-  edit: [];
-  details: [];
 }>();
 
-const formattedBalance = computed(() =>
-  new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(props.account.currentBalance),
-);
+defineEmits<{
 
-const accountType = computed(() =>
-  String(props.account.accountType).replace(/_/g, " "),
-);
+    (
+        event: "details",
+        account: FinancialAccount,
+    ): void;
+
+    (
+        event: "menu",
+        account: FinancialAccount,
+    ): void;
+
+}>();
+
+const icons: Record<string, string> = {
+
+    wallet: "👛",
+
+    bank: "🏦",
+
+    cash: "💵",
+
+    coins: "🪙",
+
+    chart: "📈",
+
+    "credit-card": "💳",
+
+    "piggy-bank": "🐷",
+
+    building: "🏢",
+
+    safe: "🔐",
+
+};
+
+const icon = computed(() => {
+
+    return icons[
+        props.account.icon
+    ] ?? "💼";
+
+});
+
+function formatCurrency(
+    value: number,
+): string {
+
+    return new Intl.NumberFormat(
+
+        "pt-BR",
+
+        {
+
+            style: "currency",
+
+            currency: "BRL",
+
+        },
+
+    ).format(value);
+
+}
+
 </script>
-
-<template>
-  <article class="account-card">
-
-    <div
-      class="account-accent"
-      :style="{ backgroundColor: account.color }"
-    />
-
-    <div class="card-content">
-
-      <header class="card-header">
-
-        <div class="account-icon">
-          <i :class="account.icon" />
-        </div>
-
-        <div class="account-title">
-
-          <h3>
-            {{ account.name }}
-          </h3>
-
-          <span v-if="account.institution">
-            {{ account.institution }}
-          </span>
-
-        </div>
-
-      </header>
-
-      <section class="account-information">
-
-        <div class="information">
-
-          <span class="label">
-            Tipo
-          </span>
-
-          <strong>
-            {{ accountType }}
-          </strong>
-
-        </div>
-
-        <div class="information">
-
-          <span class="label">
-            Saldo Atual
-          </span>
-
-          <strong class="balance">
-            {{ formattedBalance }}
-          </strong>
-
-        </div>
-
-      </section>
-
-      <footer class="card-footer">
-
-        <span
-          v-if="account.includeInCashFlow"
-          class="badge"
-        >
-          Fluxo de Caixa
-        </span>
-
-        <span
-          v-if="account.includeInNetWorth"
-          class="badge"
-        >
-          Patrimônio
-        </span>
-
-      </footer>
-
-      <div class="actions">
-
-        <button
-          class="secondary-button"
-          @click="emit('details')"
-        >
-          Detalhes
-        </button>
-
-        <button
-          class="primary-button"
-          @click="emit('edit')"
-        >
-          Editar
-        </button>
-
-      </div>
-
-    </div>
-
-  </article>
-</template>
 
 <style scoped>
 
-.account-card {
+.account-card{
 
-    display: flex;
+    background:white;
 
-    background: var(--color-surface);
+    border-radius:22px;
 
-    border: 1px solid var(--color-border);
+    padding:1.5rem;
 
-    border-radius: 16px;
+    border:1px solid #e5e7eb;
 
-    overflow: hidden;
+    display:flex;
 
-    transition: all .2s ease;
+    flex-direction:column;
+
+    gap:1.5rem;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:
+
+        0 10px 30px rgba(15,23,42,.04);
+
 }
 
-.account-card:hover {
+.account-card:hover{
 
-    transform: translateY(-3px);
+    transform:translateY(-6px);
 
-    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    box-shadow:
+
+        0 25px 50px rgba(15,23,42,.10);
+
 }
 
-.account-accent {
+.header{
 
-    width: 8px;
+    display:flex;
 
-    flex-shrink: 0;
+    justify-content:space-between;
+
+    align-items:center;
+
 }
 
-.card-content {
+.icon{
 
-    flex: 1;
+    width:56px;
 
-    padding: 1.5rem;
+    height:56px;
 
-    display: flex;
+    border-radius:18px;
 
-    flex-direction: column;
+    display:flex;
 
-    gap: 1.25rem;
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:1.7rem;
+
 }
 
-.card-header {
+.menu-button{
 
-    display: flex;
+    border:none;
 
-    gap: 1rem;
+    background:transparent;
 
-    align-items: center;
+    cursor:pointer;
+
+    font-size:1.2rem;
+
+    color:#64748b;
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:10px;
+
 }
 
-.account-icon {
+.menu-button:hover{
 
-    width: 48px;
+    background:#f1f5f9;
 
-    height: 48px;
-
-    border-radius: 12px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: var(--color-background-secondary);
-
-    font-size: 1.25rem;
 }
 
-.account-title {
+.body{
 
-    display: flex;
+    display:flex;
 
-    flex-direction: column;
+    flex-direction:column;
+
+    gap:.4rem;
+
 }
 
-.account-title h3 {
+.body h3{
 
-    margin: 0;
+    margin:0;
 
-    font-size: 1.1rem;
+    color:#0f172a;
+
+    font-size:1.2rem;
+
 }
 
-.account-title span {
+.institution{
 
-    color: var(--color-text-secondary);
+    margin:0;
 
-    font-size: .9rem;
+    color:#64748b;
+
 }
 
-.account-information {
+.balance{
 
-    display: grid;
+    margin-top:1rem;
 
-    grid-template-columns: repeat(2,1fr);
+    font-size:2rem;
 
-    gap: 1rem;
+    font-weight:700;
+
+    color:#0f172a;
+
 }
 
-.information {
+.footer{
 
-    display: flex;
+    display:flex;
 
-    flex-direction: column;
+    flex-wrap:wrap;
 
-    gap: .25rem;
+    gap:.5rem;
+
 }
 
-.label {
+.badge{
 
-    font-size: .8rem;
+    padding:.45rem .8rem;
 
-    color: var(--color-text-secondary);
+    border-radius:999px;
+
+    background:#dbeafe;
+
+    color:#2563eb;
+
+    font-size:.75rem;
+
+    font-weight:600;
+
 }
 
-.balance {
+.secondary{
 
-    font-size: 1.2rem;
+    background:#ecfdf5;
 
-    color: var(--color-primary);
-}
+    color:#059669;
 
-.card-footer {
-
-    display: flex;
-
-    gap: .5rem;
-
-    flex-wrap: wrap;
-}
-
-.badge {
-
-    padding: .3rem .7rem;
-
-    border-radius: 999px;
-
-    background: #e8f1ff;
-
-    color: #2563eb;
-
-    font-size: .75rem;
-
-    font-weight: 600;
-}
-
-.actions {
-
-    display: flex;
-
-    justify-content: flex-end;
-
-    gap: .75rem;
-
-    margin-top: auto;
-}
-
-.primary-button,
-.secondary-button {
-
-    padding: .7rem 1rem;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-weight: 600;
-}
-
-.primary-button {
-
-    border: none;
-
-    background: var(--color-primary);
-
-    color: white;
-}
-
-.secondary-button {
-
-    background: transparent;
-
-    border: 1px solid var(--color-border);
 }
 
 </style>

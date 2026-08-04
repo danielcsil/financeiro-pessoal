@@ -65,6 +65,7 @@ import { financialAccountApi } from "../api/financial-account.api";
 import type {
     CreateFinancialAccountRequest,
     FinancialAccount,
+    ListFinancialAccountsResponse,
     UpdateFinancialAccountRequest,
 } from "../types/financial-account";
 
@@ -75,11 +76,16 @@ class FinancialAccountService {
      */
     async list(): Promise<FinancialAccount[]> {
 
-        const accounts =
+        const response: ListFinancialAccountsResponse =
             await financialAccountApi.list();
 
-        return accounts.sort(
-            (a, b) => a.name.localeCompare(b.name),
+        return response.items.sort(
+            (
+                a: FinancialAccount,
+                b: FinancialAccount,
+            ) => a.name.localeCompare(
+                b.name,
+            ),
         );
 
     }

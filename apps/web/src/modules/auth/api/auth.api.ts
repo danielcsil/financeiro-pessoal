@@ -10,20 +10,21 @@ class AuthApi {
    * Cadastro de usuário.
    */
   async register(
-    request: RegisterRequest,
-  ): Promise<RegisterResponse> {
-    const { data } = await http.post<RegisterResponse>(
-      "/auth/register",
-      {
-        name: request.name,
-        email: request.email,
-        password: request.password,
-        password_confirmation: request.passwordConfirmation,
-      },
-    );
+  request: RegisterRequest,
+): Promise<RegisterResponse> {
+  const { data } = await http.post<RegisterResponse>(
+    "/auth/register",
+    {
+      name: request.name,
+      email: request.email,
+      password: request.password,
+      password_confirmation: request.passwordConfirmation,
+      accept_terms: request.acceptTerms,
+    },
+  );
 
-    return data;
-  }
+  return data;
+}
 
   /**
    * Autenticação.

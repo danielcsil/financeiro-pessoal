@@ -15,7 +15,7 @@ from logging.config import fileConfig
 
 from alembic import context
 
-from src.infrastructure.config.settings import settings
+from src.config.settings import settings
 from src.infrastructure.database.base import Base
 from src.infrastructure.database.database import engine
 
@@ -33,6 +33,9 @@ from src.infrastructure.database.database import engine
 # ============================================================================
 
 from src.infrastructure.database.models.user_model import UserModel
+from src.infrastructure.database.models.financial_account_model import (
+    FinancialAccountModel,
+)
 
 # Configuração do Alembic
 config = context.config
